@@ -10,6 +10,7 @@ import io.ktor.http.ContentType
 import io.ktor.response.respondText
 import io.ktor.routing.Routing
 import io.ktor.routing.get
+import io.ktor.routing.route
 import kotlinx.html.*
 
 fun Application.main()
@@ -18,22 +19,25 @@ fun Application.main()
     install(CallLogging)
     install(Routing)
     {
-        get("/")
+        route("/debug")
         {
-            call.respondText("Hello world", ContentType.Text.Html)
-        }
-        get("/{field}")
-        {
-            val args = call.parameters["field"] ?: ""
-            call.respondText("unsupported value entered : $args")
-        }
-        get("/html")
-        {
-            call.respondHtml {
-                head { title { +"Html response test" } }
-                body {
-                    h1("title") { +"Hello World" }
-                    p { +"An hello world test with Ktor." }
+            get("/")
+            {
+                call.respondText("Hello world", ContentType.Text.Html)
+            }
+            get("/{field}")
+            {
+                val args = call.parameters["field"] ?: ""
+                call.respondText("unsupported value entered : $args")
+            }
+            get("/html")
+            {
+                call.respondHtml {
+                    head { title { +"Html response test" } }
+                    body {
+                        h1("title") { +"Hello World" }
+                        p { +"An hello world test with Ktor." }
+                    }
                 }
             }
         }
