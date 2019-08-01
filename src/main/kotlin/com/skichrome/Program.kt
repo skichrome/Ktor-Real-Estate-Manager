@@ -74,6 +74,14 @@ fun Application.main()
                     }
                 }
             }
+            get("/fetch-xml")
+            {
+                call.respondText(XmlParser.downloadXml())
+            }
+            get("/parse")
+            {
+                call.respondText(XmlParser.getDataFromXml())
+            }
         }
     }
 }
