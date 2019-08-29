@@ -53,4 +53,8 @@ dependencies {
 
     // Json formatting
     implementation "io.ktor:ktor-jackson:$ktor_version"
+
+    // Exposed for database
+    implementation 'org.jetbrains.exposed:exposed:0.17.2'
+    implementation "mysql:mysql-connector-java:5.1.46"
 }
