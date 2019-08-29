@@ -10,7 +10,6 @@ import java.nio.channels.Channels
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.parsers.ParserConfigurationException
 
-
 object XmlParser
 {
     private lateinit var fileOutputStream: FileOutputStream
@@ -18,7 +17,7 @@ object XmlParser
     private const val xmlUrl = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml"
     private const val filePath = "bce-xml.xml"
 
-    fun downloadXml(): String
+    private fun downloadXml(): String
     {
         val url = URL(xmlUrl)
         try
@@ -43,29 +42,28 @@ object XmlParser
 
     fun getDataFromXml(): String
     {
-        val factory = DocumentBuilderFactory.newInstance()
+        downloadXml()
 
+        val factory = DocumentBuilderFactory.newInstance()
         try
         {
             val documentBuilder = factory.newDocumentBuilder()
             val document = documentBuilder.parse(File(filePath))
 
             val itemList: NodeList = document.getElementsByTagName("Cube")
-            val cur = arrayListOf<String>()
-            val rates = arrayListOf<String>()
-            var out = ""
+            val out = mutableMapOf<String, String>()
 
             for (i in 0..itemList.length)
             {
-                out += "$i \t ${itemList.item(i)?.attributes?.getNamedItem("currency") ?: "NULL"}\n"
+                val currency = itemList.item(i)?.attributes?.getNamedItem("currency")?.nodeValue ?: "NULL"
+                val rate = itemList.item(i)?.attributes?.getNamedItem("rate")?.nodeValue ?: "NULL"
 
-//                val strCur: String = itemList.item(i).attributes.getNamedItem("currency").nodeValue
-//                val strRates: String = itemList.item(i).attributes.getNamedItem("rate").nodeValue
-//                cur.add(strCur)
-//                rates.add(strRates)
+                if (currency.contains("USD"))
+                {
+                    out[currency] = rate
+                }
             }
-
-            return "$out \t ${cur.size} \t ${rates.size}"
+            return out.toString()
 
         } catch (e: ParserConfigurationException)
         {
