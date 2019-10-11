@@ -34,6 +34,25 @@ fun Application.main()
     }
     install(Routing)
     {
+        route("/")
+        {
+            get("/")
+            {
+                call.respondHtml {
+                    head {
+                        link(rel = "stylesheet", href = "https://www.w3schools.com/w3css/4/w3.css")
+                    }
+                    body {
+                        header(classes = "w3-container w3-teal") {
+                            h5 { +"Ktor Backend Server" }
+                        }
+                        footer(classes = "w3-container w3-teal w3-display-bottommiddle") {
+                            p { +"Ktor backend server for mobile application." }
+                        }
+                    }
+                }
+            }
+        }
         route("/debug")
         {
             get("/")
