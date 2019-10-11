@@ -1,5 +1,4 @@
 buildscript {
-
     repositories {
         jcenter()
         mavenLocal()
@@ -13,23 +12,20 @@ buildscript {
 apply plugin: 'java'
 apply plugin: 'kotlin'
 apply plugin: 'application'
+
 // Fat jar file
+mainClassName = 'io.ktor.server.netty.EngineMain'
 apply plugin: 'com.github.johnrengelman.shadow'
 
-mainClassName = 'io.ktor.server.netty.EngineMain'
-
 group 'com.skichrome'
-version '1.0-SNAPSHOT'
+version '1.0'
 
 sourceCompatibility = 1.8
 compileKotlin { kotlinOptions.jvmTarget = "1.8" }
 compileTestKotlin { kotlinOptions.jvmTarget = "1.8" }
 
 shadowJar {
-    baseName = "ktor"
-    manifest {
-        attributes 'Main-Class': mainClassName
-    }
+    baseName = "real-estate-manager-server"
 }
 
 repositories {
@@ -48,7 +44,7 @@ dependencies {
     // Netty server
     implementation "io.ktor:ktor-server-netty:$ktor_version"
 
-    // provide responHtml method
+    // provide respondHtml method
     implementation "io.ktor:ktor-html-builder:$ktor_version"
 
     // Json formatting

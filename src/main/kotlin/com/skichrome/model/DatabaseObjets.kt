@@ -1,11 +1,12 @@
 package com.skichrome.model
 
+import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.Table
 import java.util.*
 
 object Realty : Table()
 {
-    val id = long("id").primaryKey().autoIncrement()
+    val id = long("id").primaryKey()
     val price = float("price")
     val surface = float("surface")
     val roomNumber = integer("roomNumber")
@@ -13,32 +14,50 @@ object Realty : Table()
     val address = varchar("address", 128)
     val postCode = integer("postCode")
     val city = varchar("city", 64)
+    val latitude = double("latitude").nullable()
+    val longitude = double("longitude").nullable()
     val status = bool("status")
     val dateAdded = date("dateAdded")
     val dateSell = date("dateSell").nullable()
-    val agent = varchar("agent", 64)
+    val agentId = long("agent").references(Agent.agentId).index("agent_id_idx")
+    val realtyTypeId = long("realtyTypeId").references(RealtyType.id).index("realty_type_idx")
 }
 
 object Poi : Table()
 {
-    val id = long("poiId").primaryKey().autoIncrement()
+    val id = long("poiId").primaryKey()
     val type = varchar("type", 64)
-    val realtyId = long("realtyId").references(Realty.id).index("poi_realty_id_idx")
+//    val realtyId = long("realtyId").references(Realty.id).index("poi_realty_id_idx")
 }
 
 object RealtyType : Table()
 {
-    val id = long("realtyTypeId").primaryKey().autoIncrement()
+    val id = long("realtyTypeId").primaryKey()
     val name = varchar("name", 64)
-    val realtyId = long("realtyId").references(Realty.id).index("realty_type_realty_id_idx")
 }
 
 object MediaReference : Table()
 {
-    val id = long("mediaReferenceId").primaryKey().autoIncrement()
+    val id = long("mediaReferenceId").primaryKey()
     val reference = varchar("reference", 128)
     val shortDesc = varchar("shortDesc", 256)
-    var realtyId = long("realtyId").references(Realty.id).index("media_ref_realty_id_idx")
+    var realtyId = long("realtyId").references(
+            ref = Realty.id,
+            onUpdate = ReferenceOption.CASCADE,
+            onDelete = ReferenceOption.CASCADE
+    ).index("media_ref_realty_id_idx")
+}
+
+object PoiRealty : Table()
+{
+    val realtyId = long("realtyId").primaryKey(0).references(Realty.id)
+    val poiId = long("poiId").primaryKey(1).references(Poi.id)
+}
+
+object Agent : Table()
+{
+    val agentId = long("agentId").primaryKey()
+    val name = varchar("name", 64)
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
