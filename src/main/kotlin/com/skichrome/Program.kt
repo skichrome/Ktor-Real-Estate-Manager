@@ -11,6 +11,8 @@ import io.ktor.features.ContentNegotiation
 import io.ktor.features.DefaultHeaders
 import io.ktor.html.respondHtml
 import io.ktor.http.ContentType
+import io.ktor.http.content.resource
+import io.ktor.http.content.static
 import io.ktor.jackson.jackson
 import io.ktor.response.respondText
 import io.ktor.routing.Routing
@@ -18,6 +20,10 @@ import io.ktor.routing.get
 import io.ktor.routing.route
 import kotlinx.html.*
 
+/*
+ * URL for html templates and css style
+ * https://www.w3schools.com/w3css/default.asp
+ */
 fun Application.main()
 {
     install(DefaultHeaders)
@@ -34,6 +40,9 @@ fun Application.main()
     }
     install(Routing)
     {
+        static {
+            resource(resource = "favicon.ico", remotePath = "favicon.ico")
+        }
         route("/")
         {
             get("/")
