@@ -33,7 +33,7 @@ object DbFactory
         val realtyTypesName = listOf("Flat", "Penthouse", "Mansion", "House", "Duplex")
         transaction(db = db) {
             RealtyType.deleteAll()
-            RealtyType.batchInsert(data = realtyTypesName, ignore = true) { name ->
+            RealtyType.batchInsert(realtyTypesName) { name ->
                 this[RealtyType.name] = name
             }
         }
@@ -44,7 +44,7 @@ object DbFactory
         val poiNames = listOf("School", "Gas Station", "Trade", "Park", "Cash Machine")
         transaction(db = db) {
             Poi.deleteAll()
-            Poi.batchInsert(data = poiNames, ignore = false) { name ->
+            Poi.batchInsert(poiNames) { name ->
                 this[Poi.name] = name
             }
         }
