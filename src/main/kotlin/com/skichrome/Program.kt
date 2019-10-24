@@ -1,8 +1,6 @@
 package com.skichrome
 
-import com.skichrome.model.DbFactory
-import com.skichrome.model.JsonMapResponseOk
-import com.skichrome.model.JsonResponseOk
+import com.skichrome.model.*
 import com.skichrome.utils.HttpError
 import io.ktor.application.Application
 import io.ktor.application.call
@@ -17,10 +15,12 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.resource
 import io.ktor.http.content.static
+import io.ktor.request.receive
 import io.ktor.response.respond
 import io.ktor.response.respondText
 import io.ktor.routing.Routing
 import io.ktor.routing.get
+import io.ktor.routing.post
 import io.ktor.routing.route
 import kotlinx.html.*
 
@@ -94,33 +94,69 @@ fun Application.main()
         route("/real-estate") {
             get("/") {
                 call.respondHtml {
-                    head { title { +"Real Estate List" } }
                     body {
-                        h1 { +"Real Estate List" }
-                        p { +"This is an amazing list of all real estates available in database" }
+                        h1 { +"Available Routes" }
                         ul {
-                            li { +"Penthouse" }
-                            li { +"House" }
-                            li { +"duplex" }
-                            li { +"lofts" }
+                            li { +"/currency-conversion-rate" }
+                            li { +"/realty-types" }
+                            li { +"/all-poi" }
+                            li { +"/agents" }
+                            li { +"/agents/agent/{id}" }
+                            li { +"/agents/agent (POST)" }
                         }
                     }
                 }
             }
+
+            // --------- Currency Conversion Rate ---------
+
             get("/currency-conversion-rate") {
                 val currencyConversionValue = XmlParser.getDataFromXml()
                 currencyConversionValue?.let {
                     val formattedResponse = JsonMapResponseOk(result = it)
                     call.respond(formattedResponse)
-                } ?: call.respond("Error when trying to send currency conversion rate")
+                } ?: call.respond(
+                        HttpStatusCode.InternalServerError,
+                        "Error when trying to send currency conversion rate"
+                )
             }
+
+            // --------- Get a List of elements ---------
+
             get("/realty-types") {
                 val response = DbFactory.getAllRealtyTypes()
-                call.respond(JsonResponseOk(result = response))
+                call.respond(JsonListResponseOk(result = response))
             }
             get("/all-poi") {
                 val response = DbFactory.getAllPoi()
-                call.respond(JsonResponseOk(result = response))
+                call.respond(JsonListResponseOk(result = response))
+            }
+            get("/agents") {
+                val response = DbFactory.getAllAgents()
+                call.respond(JsonListResponseOk(result = response))
+            }
+
+            // --------- Get elements by ID ---------
+
+            get("/agents/agent/{id}")
+            {
+                val agentId = call.parameters["id"]?.toLongOrNull()
+                agentId?.let { agentIdNotNull ->
+                    val response = DbFactory.getAgentById(agentIdNotNull)
+
+                    response?.let {
+                        call.respond(JsonResponseOk(result = it))
+                    } ?: call.respond(HttpStatusCode.NotFound, "Error when trying to get this agent.")
+                } ?: call.respond(HttpStatusCode.BadRequest, "You must enter a valid number for this request")
+            }
+
+            // --------- Insert element ---------
+
+            post("/agents/agent")
+            {
+                val agentData = call.receive<AgentData>()
+                DbFactory.insertNewAgent(agentData)
+                call.respond(mapOf("OK" to true))
             }
         }
     }

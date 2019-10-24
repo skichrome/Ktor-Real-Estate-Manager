@@ -3,10 +3,7 @@ package com.skichrome.model
 import com.skichrome.utils.DB_PASSWORD
 import com.skichrome.utils.DB_PROD_URL
 import com.skichrome.utils.DB_USERNAME
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.batchInsert
-import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
 object DbFactory
@@ -16,6 +13,8 @@ object DbFactory
     private val db by lazy {
         Database.connect(url = DB_PROD_URL, driver = DB_DRIVER, user = DB_USERNAME, password = DB_PASSWORD)
     }
+
+    // --------- DB Initialisation ---------
 
     fun initDb(): String
     {
@@ -68,9 +67,19 @@ object DbFactory
         }
     }
 
+    fun insertNewAgent(newAgent: AgentData)
+    {
+        transaction(db = db) {
+            Agent.insertIgnore {
+                it[agentId] = newAgent.agentId
+                it[name] = newAgent.name
+            }
+        }
+    }
+
     // --------- Select All ---------
 
-    fun getAllRealtyTypes(): List<RealtyTypeData>?
+    fun getAllRealtyTypes(): List<RealtyTypeData>
     {
         val resultList: MutableList<RealtyTypeData> = mutableListOf()
         transaction(db = db) {
@@ -84,7 +93,7 @@ object DbFactory
         return resultList
     }
 
-    fun getAllPoi(): List<PoiData>?
+    fun getAllPoi(): List<PoiData>
     {
         val resultList: MutableList<PoiData> = mutableListOf()
         transaction(db = db) {
@@ -96,5 +105,34 @@ object DbFactory
             }
         }
         return resultList
+    }
+
+    fun getAllAgents(): List<AgentData>
+    {
+        val resultList: MutableList<AgentData> = mutableListOf()
+        transaction(db = db) {
+            Agent.selectAll().forEach {
+                resultList.add(AgentData(
+                        agentId = it[Agent.agentId],
+                        name = it[Agent.name]
+                ))
+            }
+        }
+        return resultList
+    }
+
+    // --------- Select ---------
+
+    fun getAgentById(id: Long): AgentData?
+    {
+        var result: AgentData? = null
+        transaction(db = db) {
+            Agent.select { Agent.agentId eq id }
+                    .firstOrNull {
+                        result = AgentData(agentId = it[Agent.agentId], name = it[Agent.name])
+                        return@firstOrNull true
+                    }
+        }
+        return result
     }
 }

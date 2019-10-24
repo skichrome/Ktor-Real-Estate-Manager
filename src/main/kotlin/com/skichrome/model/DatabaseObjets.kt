@@ -27,7 +27,6 @@ object Poi : Table()
 {
     val id = integer("poiId").primaryKey()
     val name = varchar("name", 64)
-//    val realtyId = long("realtyId").references(Realty.id).index("poi_realty_id_idx")
 }
 
 object RealtyType : Table()
@@ -41,7 +40,7 @@ object MediaReference : Table()
     val id = long("mediaReferenceId").primaryKey()
     val reference = varchar("reference", 128)
     val shortDesc = varchar("shortDesc", 256)
-    var realtyId = long("realtyId").references(
+    val realtyId = long("realtyId").references(
             ref = Realty.id,
             onUpdate = ReferenceOption.CASCADE,
             onDelete = ReferenceOption.CASCADE
@@ -56,31 +55,33 @@ object PoiRealty : Table()
 
 object Agent : Table()
 {
-    val agentId = long("agentId").primaryKey()
+    val agentId = long("agentId").primaryKey().autoIncrement()
     val name = varchar("name", 64)
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-data class PoiData(private val id: Int, private val name: String)
-data class RealtyTypeData(private val id: Int, private val name: String)
-data class MediaReferenceData(private val id: Long, private val reference: String, private val shortDesc: String)
+data class PoiData(val id: Int, val name: String)
+data class RealtyTypeData(val id: Int, val name: String)
+data class MediaReferenceData(val id: Long, val reference: String, val shortDesc: String)
+
+data class AgentData(val agentId: Long, val name: String)
 
 data class RealtyData(
-        private val id: Long,
-        private val price: Float,
-        private val surface: Float,
-        private val roomNumber: Int,
-        private val fullDescription: String,
-        private val address: String,
-        private val postCode: Int,
-        private val city: String,
-        private val status: Boolean,
-        private val dateAdded: Date,
-        private val dateSell: Date,
-        private val agent: String,
+        val id: Long,
+        val price: Float,
+        val surface: Float,
+        val roomNumber: Int,
+        val fullDescription: String,
+        val address: String,
+        val postCode: Int,
+        val city: String,
+        val status: Boolean,
+        val dateAdded: Date,
+        val dateSell: Date,
+        val agent: String,
 
-        private val poiList: List<PoiData>,
-        private val realtyType: List<RealtyTypeData>,
-        private val mediaReference: List<MediaReferenceData>
+        val poiList: List<PoiData>,
+        val realtyType: List<RealtyTypeData>,
+        val mediaReference: List<MediaReferenceData>
 )
