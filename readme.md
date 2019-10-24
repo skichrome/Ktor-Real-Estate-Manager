@@ -27,8 +27,6 @@ Create a script execution in Jenkins, before any gradle invoke and insert these 
 ```Shell
 #!/bin/sh
 
-mkdir $WORKSPACE/src/main/kotlin/com/skichrome/utils/
-
 echo "package com.skichrome.utils" > $WORKSPACE/src/main/kotlin/com/skichrome/utils/DatabaseCredentials.kt
 echo "" >> $WORKSPACE/src/main/kotlin/com/skichrome/utils/DatabaseCredentials.kt
 echo "const val DB_PROD_URL = \"jdbc:mysql://YOUR_DB_URL:DB_PORT/DB_NAME\"" >> $WORKSPACE/src/main/kotlin/com/skichrome/utils/DatabaseCredentials.kt

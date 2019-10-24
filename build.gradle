@@ -48,7 +48,7 @@ dependencies {
     implementation "io.ktor:ktor-html-builder:$ktor_version"
 
     // Json formatting
-    implementation "io.ktor:ktor-jackson:$ktor_version"
+    implementation "io.ktor:ktor-gson:$ktor_version"
 
     // Exposed for database
     implementation 'org.jetbrains.exposed:exposed:0.17.2'
