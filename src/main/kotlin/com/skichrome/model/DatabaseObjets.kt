@@ -19,20 +19,20 @@ object Realty : Table()
     val status = bool("status")
     val dateAdded = date("dateAdded")
     val dateSell = date("dateSell").nullable()
-    val agentId = long("agent").references(Agent.agentId).index("agent_id_idx")
-    val realtyTypeId = long("realtyTypeId").references(RealtyType.id).index("realty_type_idx")
+    val agentId = long("agent_id").references(Agent.agentId).index("agent_id_idx")
+    val realtyTypeId = integer("realty_type_id").references(RealtyType.id).index("realty_type_idx")
 }
 
 object Poi : Table()
 {
-    val id = long("poiId").primaryKey()
-    val type = varchar("type", 64)
+    val id = integer("poiId").primaryKey()
+    val name = varchar("name", 64)
 //    val realtyId = long("realtyId").references(Realty.id).index("poi_realty_id_idx")
 }
 
 object RealtyType : Table()
 {
-    val id = long("realtyTypeId").primaryKey()
+    val id = integer("realtyTypeId").primaryKey()
     val name = varchar("name", 64)
 }
 
@@ -51,7 +51,7 @@ object MediaReference : Table()
 object PoiRealty : Table()
 {
     val realtyId = long("realtyId").primaryKey(0).references(Realty.id)
-    val poiId = long("poiId").primaryKey(1).references(Poi.id)
+    val poiId = integer("poiId").primaryKey(1).references(Poi.id)
 }
 
 object Agent : Table()
