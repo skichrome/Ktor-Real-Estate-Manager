@@ -40,7 +40,7 @@ object XmlParser
         return ""
     }
 
-    fun getDataFromXml(): String
+    fun getDataFromXml(): Map<String, Float>?
     {
         downloadXml()
 
@@ -51,19 +51,21 @@ object XmlParser
             val document = documentBuilder.parse(File(filePath))
 
             val itemList: NodeList = document.getElementsByTagName("Cube")
-            val out = mutableMapOf<String, String>()
+            val out = mutableMapOf<String, Float>()
 
             for (i in 0..itemList.length)
             {
                 val currency = itemList.item(i)?.attributes?.getNamedItem("currency")?.nodeValue ?: "NULL"
-                val rate = itemList.item(i)?.attributes?.getNamedItem("rate")?.nodeValue ?: "NULL"
+                val rate = itemList.item(i)?.attributes?.getNamedItem("rate")?.nodeValue?.toFloat() ?: -1f
 
                 if (currency.contains("USD"))
                 {
                     out[currency] = rate
+                    val euroEquivalent: Float = 1f / rate
+                    out["EUR"] = euroEquivalent
                 }
             }
-            return out.toString()
+            return out
 
         } catch (e: ParserConfigurationException)
         {
@@ -75,6 +77,6 @@ object XmlParser
         {
             e.printStackTrace()
         }
-        return "KO"
+        return null
     }
 }

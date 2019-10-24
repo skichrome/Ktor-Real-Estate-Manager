@@ -1,6 +1,7 @@
 package com.skichrome
 
 import com.skichrome.model.DbFactory
+import com.skichrome.model.JsonMapResponseOk
 import com.skichrome.utils.HttpError
 import io.ktor.application.Application
 import io.ktor.application.call
@@ -105,8 +106,12 @@ fun Application.main()
                     }
                 }
             }
-            get("/parse") {
-                call.respondText(XmlParser.getDataFromXml())
+            get("/currency-conversion-rate") {
+                val currencyConversionValue = XmlParser.getDataFromXml()
+                currencyConversionValue?.let {
+                    val formattedResponse = JsonMapResponseOk(result = it)
+                    call.respond(formattedResponse)
+                } ?: call.respond("Error when trying to send currency conversion rate")
             }
         }
     }
