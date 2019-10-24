@@ -17,7 +17,7 @@ object DbFactory
         Database.connect(url = DB_PROD_URL, driver = DB_DRIVER, user = DB_USERNAME, password = DB_PASSWORD)
     }
 
-    init
+    fun initDb(): String
     {
         transaction {
             addLogger(StdOutSqlLogger)
@@ -26,5 +26,6 @@ object DbFactory
             SchemaUtils.createMissingTablesAndColumns(MediaReference, Poi)
             SchemaUtils.createMissingTablesAndColumns(PoiRealty)
         }
+        return "success"
     }
 }

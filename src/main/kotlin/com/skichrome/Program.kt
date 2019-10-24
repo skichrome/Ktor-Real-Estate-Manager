@@ -3,6 +3,7 @@ package com.skichrome
 import com.fasterxml.jackson.core.util.DefaultIndenter
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
 import com.fasterxml.jackson.databind.SerializationFeature
+import com.skichrome.model.DbFactory
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
@@ -60,6 +61,11 @@ fun Application.main()
                         }
                     }
                 }
+            }
+            get("/init")
+            {
+                val response = DbFactory.initDb()
+                call.respondText(response, ContentType.Text.Html)
             }
         }
         route("/debug")
