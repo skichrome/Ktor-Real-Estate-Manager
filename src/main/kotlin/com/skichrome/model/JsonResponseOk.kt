@@ -10,11 +10,11 @@ data class JsonResponseOk(
         val result: List<*>? = null
 )
 {
-    private val sdf = SimpleDateFormat("dd/MM/yyyy hh:mm:ss")
-
     init
     {
-        numResults = result?.size ?: -1
+        val sdf = SimpleDateFormat("dd/MM/yyyy hh:mm:ss")
         last_updated = sdf.format(System.currentTimeMillis())
+
+        numResults = result?.size ?: -1
     }
 }

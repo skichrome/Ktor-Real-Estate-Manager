@@ -2,6 +2,7 @@ package com.skichrome
 
 import com.skichrome.model.DbFactory
 import com.skichrome.model.JsonMapResponseOk
+import com.skichrome.model.JsonResponseOk
 import com.skichrome.utils.HttpError
 import io.ktor.application.Application
 import io.ktor.application.call
@@ -112,6 +113,14 @@ fun Application.main()
                     val formattedResponse = JsonMapResponseOk(result = it)
                     call.respond(formattedResponse)
                 } ?: call.respond("Error when trying to send currency conversion rate")
+            }
+            get("/realty-types") {
+                val response = DbFactory.getAllRealtyTypes()
+                call.respond(JsonResponseOk(result = response))
+            }
+            get("/all-poi") {
+                val response = DbFactory.getAllPoi()
+                call.respond(JsonResponseOk(result = response))
             }
         }
     }

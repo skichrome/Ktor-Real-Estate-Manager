@@ -25,14 +25,14 @@ object Realty : Table()
 
 object Poi : Table()
 {
-    val id = integer("poiId").primaryKey().autoIncrement()
+    val id = integer("poiId").primaryKey()
     val name = varchar("name", 64)
 //    val realtyId = long("realtyId").references(Realty.id).index("poi_realty_id_idx")
 }
 
 object RealtyType : Table()
 {
-    val id = integer("realtyTypeId").primaryKey().autoIncrement()
+    val id = integer("realtyTypeId").primaryKey()
     val name = varchar("name", 64)
 }
 
@@ -62,8 +62,8 @@ object Agent : Table()
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-data class PoiData(private val id: Long, private val type: String)
-data class RealtyTypeData(private val id: Long, private val name: String)
+data class PoiData(private val id: Int, private val name: String)
+data class RealtyTypeData(private val id: Int, private val name: String)
 data class MediaReferenceData(private val id: Long, private val reference: String, private val shortDesc: String)
 
 data class RealtyData(
