@@ -19,7 +19,7 @@ object DbFactory
 
     fun initDb(): String
     {
-        transaction {
+        transaction(db = db) {
             addLogger(StdOutSqlLogger)
             SchemaUtils.createMissingTablesAndColumns(Agent, RealtyType)
             SchemaUtils.createMissingTablesAndColumns(Realty)
