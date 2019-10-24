@@ -3,10 +3,7 @@ package com.skichrome.model
 import com.skichrome.utils.DB_PASSWORD
 import com.skichrome.utils.DB_PROD_URL
 import com.skichrome.utils.DB_USERNAME
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.StdOutSqlLogger
-import org.jetbrains.exposed.sql.addLogger
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
 object DbFactory
@@ -26,6 +23,30 @@ object DbFactory
             SchemaUtils.createMissingTablesAndColumns(MediaReference, Poi)
             SchemaUtils.createMissingTablesAndColumns(PoiRealty)
         }
+        insertRealtyTypes()
+        insertPoi()
         return "success"
+    }
+
+    private fun insertRealtyTypes()
+    {
+        val realtyTypesName = listOf("Flat", "Penthouse", "Mansion", "House", "Duplex")
+        transaction(db = db) {
+            RealtyType.deleteAll()
+            RealtyType.batchInsert(data = realtyTypesName, ignore = true) { name ->
+                this[RealtyType.name] = name
+            }
+        }
+    }
+
+    private fun insertPoi()
+    {
+        val poiNames = listOf("School", "Gas Station", "Trade", "Park", "Cash Machine")
+        transaction(db = db) {
+            Poi.deleteAll()
+            Poi.batchInsert(data = poiNames, ignore = false) { name ->
+                this[Poi.name] = name
+            }
+        }
     }
 }

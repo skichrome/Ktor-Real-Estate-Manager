@@ -25,14 +25,14 @@ object Realty : Table()
 
 object Poi : Table()
 {
-    val id = integer("poiId").primaryKey()
+    val id = integer("poiId").primaryKey().autoIncrement()
     val name = varchar("name", 64)
 //    val realtyId = long("realtyId").references(Realty.id).index("poi_realty_id_idx")
 }
 
 object RealtyType : Table()
 {
-    val id = integer("realtyTypeId").primaryKey()
+    val id = integer("realtyTypeId").primaryKey().autoIncrement()
     val name = varchar("name", 64)
 }
 
