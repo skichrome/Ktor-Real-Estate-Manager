@@ -36,6 +36,7 @@ fun Application.main()
     {
         gson {
             setPrettyPrinting()
+            setDateFormat("dd/MM/yyyy hh:mm:ss")
         }
     }
     install(StatusPages) {
@@ -98,11 +99,14 @@ fun Application.main()
                         h1 { +"Available Routes" }
                         ul {
                             li { +"/currency-conversion-rate" }
-                            li { +"/realty-types" }
+                            li { +"/all-realty-types" }
                             li { +"/all-poi" }
-                            li { +"/agents" }
+                            li { +"/all-agents" }
+                            li { +"/all-poi-realty" }
+                            li { +"/all-media-references" }
+                            li { +"/all-realty" }
                             li { +"/agents/agent/{id}" }
-                            li { +"/agents/agent (POST)" }
+                            li { +"/agents/agent (POST) : example of content to send : | {\"agentId\": \"1\", \"name\":\"Boris\",\"lastUpdate\":\"25/10/2019 10:06:00\"} |" }
                         }
                     }
                 }
@@ -123,7 +127,7 @@ fun Application.main()
 
             // --------- Get a List of elements ---------
 
-            get("/realty-types") {
+            get("/all-realty-types") {
                 val response = DbFactory.getAllRealtyTypes()
                 call.respond(JsonListResponseOk(result = response))
             }
@@ -131,8 +135,20 @@ fun Application.main()
                 val response = DbFactory.getAllPoi()
                 call.respond(JsonListResponseOk(result = response))
             }
-            get("/agents") {
+            get("/all-agents") {
                 val response = DbFactory.getAllAgents()
+                call.respond(JsonListResponseOk(result = response))
+            }
+            get("/all-poi-realty") {
+                val response = DbFactory.getAllPoiRealty()
+                call.respond(JsonListResponseOk(result = response))
+            }
+            get("/all-media-references") {
+                val response = DbFactory.getAllMediaReference()
+                call.respond(JsonListResponseOk(result = response))
+            }
+            get("/all-realty") {
+                val response = DbFactory.getAllRealty()
                 call.respond(JsonListResponseOk(result = response))
             }
 

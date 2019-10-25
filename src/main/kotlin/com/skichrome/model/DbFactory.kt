@@ -114,7 +114,65 @@ object DbFactory
             Agent.selectAll().forEach {
                 resultList.add(AgentData(
                         agentId = it[Agent.agentId],
-                        name = it[Agent.name]
+                        name = it[Agent.name],
+                        lastUpdate = it[Agent.lastUpdate].toDate()
+                ))
+            }
+        }
+        return resultList
+    }
+
+    fun getAllPoiRealty(): List<PoiRealtyData>
+    {
+        val resultList: MutableList<PoiRealtyData> = mutableListOf()
+        transaction(db = db) {
+            PoiRealty.selectAll().forEach {
+                resultList.add(PoiRealtyData(
+                        poiId = it[PoiRealty.poiId],
+                        realtyId = it[PoiRealty.realtyId]
+                ))
+            }
+        }
+        return resultList
+    }
+
+    fun getAllMediaReference(): List<MediaReferenceData>
+    {
+        val resultList: MutableList<MediaReferenceData> = mutableListOf()
+        transaction(db = db) {
+            MediaReference.selectAll().forEach {
+                resultList.add(MediaReferenceData(
+                        realtyId = it[MediaReference.realtyId],
+                        id = it[MediaReference.id],
+                        reference = it[MediaReference.reference],
+                        shortDesc = it[MediaReference.shortDesc]
+                ))
+            }
+        }
+        return resultList
+    }
+
+    fun getAllRealty(): List<RealtyData>
+    {
+        val resultList: MutableList<RealtyData> = mutableListOf()
+        transaction(db = db) {
+            Realty.selectAll().forEach {
+                resultList.add(RealtyData(
+                        id = it[Realty.id],
+                        status = it[Realty.status],
+                        agentId = it[Realty.agentId],
+                        address = it[Realty.address],
+                        city = it[Realty.city],
+                        dateAdded = it[Realty.dateAdded].toDate(),
+                        dateSell = it[Realty.dateSell]?.toDate(),
+                        fullDescription = it[Realty.fullDescription],
+                        latitude = it[Realty.latitude],
+                        longitude = it[Realty.longitude],
+                        postCode = it[Realty.postCode],
+                        price = it[Realty.price],
+                        realtyTypeId = it[Realty.realtyTypeId],
+                        roomNumber = it[Realty.roomNumber],
+                        surface = it[Realty.surface]
                 ))
             }
         }
@@ -129,7 +187,7 @@ object DbFactory
         transaction(db = db) {
             Agent.select { Agent.agentId eq id }
                     .firstOrNull {
-                        result = AgentData(agentId = it[Agent.agentId], name = it[Agent.name])
+                        result = AgentData(agentId = it[Agent.agentId], name = it[Agent.name], lastUpdate = it[Agent.lastUpdate].toDate())
                         return@firstOrNull true
                     }
         }

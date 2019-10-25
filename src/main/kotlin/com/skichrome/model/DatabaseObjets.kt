@@ -2,6 +2,7 @@ package com.skichrome.model
 
 import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.Table
+import org.joda.time.DateTime
 import java.util.*
 
 object Realty : Table()
@@ -57,15 +58,16 @@ object Agent : Table()
 {
     val agentId = long("agentId").primaryKey().autoIncrement()
     val name = varchar("name", 64)
+    val lastUpdate = datetime("lastUpdate").default(DateTime(System.currentTimeMillis()))
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
 
 data class PoiData(val id: Int, val name: String)
 data class RealtyTypeData(val id: Int, val name: String)
-data class MediaReferenceData(val id: Long, val reference: String, val shortDesc: String)
-
-data class AgentData(val agentId: Long, val name: String)
+data class MediaReferenceData(val id: Long, val reference: String, val shortDesc: String, val realtyId: Long)
+data class PoiRealtyData(val realtyId: Long, val poiId: Int)
+data class AgentData(val agentId: Long, val name: String, val lastUpdate: Date)
 
 data class RealtyData(
         val id: Long,
@@ -76,12 +78,12 @@ data class RealtyData(
         val address: String,
         val postCode: Int,
         val city: String,
+        val latitude: Double?,
+        val longitude: Double?,
         val status: Boolean,
         val dateAdded: Date,
-        val dateSell: Date,
-        val agent: String,
+        val dateSell: Date?,
 
-        val poiList: List<PoiData>,
-        val realtyType: List<RealtyTypeData>,
-        val mediaReference: List<MediaReferenceData>
+        val agentId: Long,
+        val realtyTypeId: Int
 )
