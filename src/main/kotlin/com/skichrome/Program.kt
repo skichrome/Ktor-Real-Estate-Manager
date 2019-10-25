@@ -53,7 +53,13 @@ fun Application.main()
         static {
             resource(resource = "favicon.ico", remotePath = "favicon.ico")
         }
-        route("/") {
+
+        // --------- Main Entry Point ---------
+
+        route("/")
+        {
+            // --------- Home Page ---------
+
             get("/") {
                 call.respondHtml {
                     head {
@@ -69,110 +75,128 @@ fun Application.main()
                     }
                 }
             }
-            get("/init") {
-                val response = DbFactory.initDb()
-                call.respondText(response, ContentType.Text.Html)
-            }
-        }
-        route("/debug") {
-            get("/") {
-                call.respondText("Hello world", ContentType.Text.Html)
-            }
-            get("/{field}") {
-                val args = call.parameters["field"] ?: ""
-                call.respondText("unsupported value entered : $args")
-            }
-            get("/html") {
-                call.respondHtml {
-                    head { title { +"Html response test" } }
-                    body {
-                        h1("title") { +"Hello World" }
-                        p { +"An hello world test with Ktor." }
-                    }
-                }
-            }
-        }
-        route("/real-estate") {
-            get("/") {
-                call.respondHtml {
-                    body {
-                        h1 { +"Available Routes" }
-                        ul {
-                            li { +"/currency-conversion-rate" }
-                            li { +"/all-realty-types" }
-                            li { +"/all-poi" }
-                            li { +"/all-agents" }
-                            li { +"/all-poi-realty" }
-                            li { +"/all-media-references" }
-                            li { +"/all-realty" }
-                            li { +"/agents/agent/{id}" }
-                            li { +"/agents/agent (POST) : example of content to send : | {\"agentId\": \"1\", \"name\":\"Boris\",\"lastUpdate\":\"25/10/2019 10:06:00\"} |" }
+
+            // --------- Help page about available routes ---------
+
+            route("/real-estate")
+            {
+                get("/") {
+                    call.respondHtml {
+                        body {
+                            h1 { +"Available Routes" }
+                            ul {
+                                li { +"/currency-conversion-rate" }
+                                li { +"/all-realty-types : GET" }
+                                li { +"/all-poi : GET" }
+                                li { +"/all-agents/agent={id} : GET" }
+                                li { +"/all-agents : GET / POST ; example of content to send : | {\"agentId\": \"1\", \"name\":\"Boris\",\"lastUpdate\":\"25/10/2019 10:06:00\"} |" }
+                                li { +"/all-poi-realty : GET / POST" }
+                                li { +"/all-media-references : GET / POST" }
+                                li { +"/all-realty : GET / POST" }
+                            }
                         }
                     }
                 }
-            }
 
-            // --------- Currency Conversion Rate ---------
+                // --------- Database Initialisation ---------
 
-            get("/currency-conversion-rate") {
-                val currencyConversionValue = XmlParser.getDataFromXml()
-                currencyConversionValue?.let {
-                    val formattedResponse = JsonMapResponseOk(result = it)
-                    call.respond(formattedResponse)
-                } ?: call.respond(
-                        HttpStatusCode.InternalServerError,
-                        "Error when trying to send currency conversion rate"
-                )
-            }
+                get("/init") {
+                    val response = DbFactory.initDb()
+                    call.respondText(response, ContentType.Text.Html)
+                }
 
-            // --------- Get a List of elements ---------
+                // --------- Currency Conversion Rate ---------
 
-            get("/all-realty-types") {
-                val response = DbFactory.getAllRealtyTypes()
-                call.respond(JsonListResponseOk(result = response))
-            }
-            get("/all-poi") {
-                val response = DbFactory.getAllPoi()
-                call.respond(JsonListResponseOk(result = response))
-            }
-            get("/all-agents") {
-                val response = DbFactory.getAllAgents()
-                call.respond(JsonListResponseOk(result = response))
-            }
-            get("/all-poi-realty") {
-                val response = DbFactory.getAllPoiRealty()
-                call.respond(JsonListResponseOk(result = response))
-            }
-            get("/all-media-references") {
-                val response = DbFactory.getAllMediaReference()
-                call.respond(JsonListResponseOk(result = response))
-            }
-            get("/all-realty") {
-                val response = DbFactory.getAllRealty()
-                call.respond(JsonListResponseOk(result = response))
-            }
+                get("/currency-conversion-rate") {
+                    val currencyConversionValue = XmlParser.getDataFromXml()
+                    currencyConversionValue?.let {
+                        val formattedResponse = JsonMapResponseOk(result = it)
+                        call.respond(formattedResponse)
+                    } ?: call.respond(
+                            HttpStatusCode.InternalServerError,
+                            "Error when trying to send currency conversion rate"
+                    )
+                }
 
-            // --------- Get elements by ID ---------
+                // --------- Read / Write from API ---------
 
-            get("/agents/agent/{id}")
-            {
-                val agentId = call.parameters["id"]?.toLongOrNull()
-                agentId?.let { agentIdNotNull ->
-                    val response = DbFactory.getAgentById(agentIdNotNull)
+                route("/all-realty")
+                {
+                    get("/") {
+                        val response = DbFactory.getAllRealty()
+                        call.respond(JsonListResponseOk(result = response))
+                    }
+                    post("/") {
+                        call.respond(mapOf("OK" to true))
+                    }
+                }
 
-                    response?.let {
-                        call.respond(JsonResponseOk(result = it))
-                    } ?: call.respond(HttpStatusCode.NotFound, "Error when trying to get this agent.")
-                } ?: call.respond(HttpStatusCode.BadRequest, "You must enter a valid number for this request")
-            }
+                route("/all-agents")
+                {
+                    get("/") {
+                        val response = DbFactory.getAllAgents()
+                        call.respond(JsonListResponseOk(result = response))
+                    }
+                    get("/agent={id}")
+                    {
+                        val agentId = call.parameters["id"]?.toLongOrNull()
+                        agentId?.let { agentIdNotNull ->
+                            val response = DbFactory.getAgentById(agentIdNotNull)
 
-            // --------- Insert element ---------
+                            response?.let {
+                                call.respond(JsonResponseOk(result = it))
+                            } ?: call.respond(HttpStatusCode.NotFound, "Error when trying to get this agent.")
+                        } ?: call.respond(HttpStatusCode.BadRequest, "You must enter a valid number for this request")
+                    }
+                    post("/") {
+                        val agentData = call.receive<List<AgentData>>()
+                        DbFactory.insertAgentList(agentData)
+                        call.respond(mapOf("OK" to true))
+                    }
+                }
 
-            post("/agents/agent")
-            {
-                val agentData = call.receive<AgentData>()
-                DbFactory.insertNewAgent(agentData)
-                call.respond(mapOf("OK" to true))
+                route("/all-poi-realty")
+                {
+                    get("/") {
+                        val response = DbFactory.getAllPoiRealty()
+                        call.respond(JsonListResponseOk(result = response))
+                    }
+                    post("/") {
+                        val poiRealtyData = call.receive<List<PoiRealtyData>>()
+                        DbFactory.insertPoiRealtyList(poiRealtyData)
+                        call.respond(mapOf("OK" to true))
+                    }
+                }
+
+                route("/all-media-references")
+                {
+                    get("/") {
+                        val response = DbFactory.getAllMediaReference()
+                        call.respond(JsonListResponseOk(result = response))
+                    }
+                    post("/") {
+                        val mediaRefData = call.receive<List<MediaReferenceData>>()
+                        DbFactory.insertMediaReferenceList(mediaRefData)
+                        call.respond(mapOf("OK" to true))
+                    }
+                }
+
+                // --------- Read Only from API ---------
+
+                route("/all-realty-types")
+                {
+                    get("/") {
+                        val response = DbFactory.getAllRealtyTypes()
+                        call.respond(JsonListResponseOk(result = response))
+                    }
+                }
+                route("/all-poi")
+                {
+                    get("/") {
+                        val response = DbFactory.getAllPoi()
+                        call.respond(JsonListResponseOk(result = response))
+                    }
+                }
             }
         }
     }

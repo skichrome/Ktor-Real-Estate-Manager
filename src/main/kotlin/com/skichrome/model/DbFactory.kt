@@ -29,7 +29,7 @@ object DbFactory
         return "success"
     }
 
-    // --------- Insert ---------
+    // --------- Insert (SERVER ONLY) ---------
 
     private fun insertRealtyTypes()
     {
@@ -67,12 +67,36 @@ object DbFactory
         }
     }
 
-    fun insertNewAgent(newAgent: AgentData)
+    // --------- Insert (FROM API) ---------
+
+    fun insertAgentList(newAgent: List<AgentData>)
     {
         transaction(db = db) {
-            Agent.insertIgnore {
-                it[agentId] = newAgent.agentId
-                it[name] = newAgent.name
+            Agent.batchInsert(ignore = true, data = newAgent) { agentToInsert ->
+                this[Agent.agentId] = agentToInsert.agentId
+                this[Agent.name] = agentToInsert.name
+            }
+        }
+    }
+
+    fun insertPoiRealtyList(poiRealty: List<PoiRealtyData>)
+    {
+        transaction(db = db) {
+            PoiRealty.batchInsert(ignore = true, data = poiRealty) { poiRealtyToInsert ->
+                this[PoiRealty.poiId] = poiRealtyToInsert.poiId
+                this[PoiRealty.realtyId] = poiRealtyToInsert.realtyId
+            }
+        }
+    }
+
+    fun insertMediaReferenceList(mediaReferences: List<MediaReferenceData>)
+    {
+        transaction(db = db) {
+            MediaReference.batchInsert(ignore = true, data = mediaReferences) { mediaRefToInsert ->
+                this[MediaReference.id] = mediaRefToInsert.id
+                this[MediaReference.realtyId] = mediaRefToInsert.realtyId
+                this[MediaReference.reference] = mediaRefToInsert.reference
+                this[MediaReference.shortDesc] = mediaRefToInsert.shortDesc
             }
         }
     }
