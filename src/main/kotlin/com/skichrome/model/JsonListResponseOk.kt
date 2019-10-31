@@ -6,7 +6,7 @@ data class JsonListResponseOk(
         val status: String = "OK",
         var last_updated: String? = null,
         val lang: String = "FR",
-        var numResults: Int = 0,
+        var num_results: Int = 0,
         val result: List<*>? = null
 )
 {
@@ -14,7 +14,6 @@ data class JsonListResponseOk(
     {
         val sdf = SimpleDateFormat("dd/MM/yyyy hh:mm:ss")
         last_updated = sdf.format(System.currentTimeMillis())
-
-        numResults = result?.size ?: -1
+        num_results = result?.size ?: -1
     }
 }
