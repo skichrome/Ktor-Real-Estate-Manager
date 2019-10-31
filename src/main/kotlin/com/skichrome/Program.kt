@@ -127,6 +127,8 @@ fun Application.main()
                         call.respond(JsonListResponseOk(result = response))
                     }
                     post("/") {
+                        val realtyData = call.receive<List<RealtyData>>()
+                        DbFactory.insertRealtyList(realtyData)
                         call.respond(mapOf("OK" to true))
                     }
                 }

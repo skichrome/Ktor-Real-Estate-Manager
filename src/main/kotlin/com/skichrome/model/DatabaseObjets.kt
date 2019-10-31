@@ -81,8 +81,8 @@ data class RealtyData(
         val latitude: Double?,
         val longitude: Double?,
         val status: Boolean,
-        val dateAdded: Date,
-        val dateSell: Date?,
+        val dateAdded: DateTime,
+        val dateSell: DateTime?,
 
         val agentId: Long,
         val realtyTypeId: Int

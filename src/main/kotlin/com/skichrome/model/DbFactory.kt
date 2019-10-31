@@ -69,6 +69,29 @@ object DbFactory
 
     // --------- Insert (FROM API) ---------
 
+    fun insertRealtyList(newRealty: List<RealtyData>)
+    {
+        transaction(db = db) {
+            Realty.batchInsert(ignore = true, data = newRealty) { realtyToInsert ->
+                this[Realty.id] = realtyToInsert.id
+                this[Realty.status] = realtyToInsert.status
+                this[Realty.agentId] = realtyToInsert.agentId
+                this[Realty.address] = realtyToInsert.address
+                this[Realty.city] = realtyToInsert.city
+                this[Realty.dateAdded] = realtyToInsert.dateAdded
+                this[Realty.dateSell] = realtyToInsert.dateSell
+                this[Realty.fullDescription] = realtyToInsert.fullDescription
+                this[Realty.latitude] = realtyToInsert.latitude
+                this[Realty.longitude] = realtyToInsert.longitude
+                this[Realty.postCode] = realtyToInsert.postCode
+                this[Realty.price] = realtyToInsert.price
+                this[Realty.realtyTypeId] = realtyToInsert.realtyTypeId
+                this[Realty.roomNumber] = realtyToInsert.roomNumber
+                this[Realty.surface] = realtyToInsert.surface
+            }
+        }
+    }
+
     fun insertAgentList(newAgent: List<AgentData>)
     {
         transaction(db = db) {
@@ -187,8 +210,8 @@ object DbFactory
                         agentId = it[Realty.agentId],
                         address = it[Realty.address],
                         city = it[Realty.city],
-                        dateAdded = it[Realty.dateAdded].toDate(),
-                        dateSell = it[Realty.dateSell]?.toDate(),
+                        dateAdded = it[Realty.dateAdded],
+                        dateSell = it[Realty.dateSell],
                         fullDescription = it[Realty.fullDescription],
                         latitude = it[Realty.latitude],
                         longitude = it[Realty.longitude],
