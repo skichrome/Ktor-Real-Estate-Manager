@@ -4,11 +4,5 @@ import org.junit.Test
 class ExampleTest
 {
     @Test
-    fun additionIsCorrect()
-    {
-        assertEquals("Example unit test, to check if it is executed", 4, 2 + 2)
-    }
-
-    @Test
-    fun failingTest() = assertEquals("This test will fail", 2, 4)
+    fun additionIsCorrect() = assertEquals("Passing test, to check if tests are executed", 4, 2 + 2)
 }
