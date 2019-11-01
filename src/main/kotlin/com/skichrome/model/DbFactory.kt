@@ -83,7 +83,7 @@ object DbFactory
                 this[Realty.fullDescription] = realtyToInsert.full_description
                 this[Realty.latitude] = realtyToInsert.latitude
                 this[Realty.longitude] = realtyToInsert.longitude
-                this[Realty.postCode] = realtyToInsert.postCode
+                this[Realty.postCode] = realtyToInsert.post_code
                 this[Realty.price] = realtyToInsert.price
                 this[Realty.realtyTypeId] = realtyToInsert.realty_type_id
                 this[Realty.roomNumber] = realtyToInsert.room_number
@@ -98,6 +98,16 @@ object DbFactory
             Agent.batchInsert(ignore = true, data = newAgent) { agentToInsert ->
                 this[Agent.agentId] = agentToInsert.agent_id
                 this[Agent.name] = agentToInsert.name
+            }
+        }
+    }
+
+    fun updateAgent(agentUpdate: AgentData)
+    {
+        transaction(db = db) {
+            Agent.update({ Agent.agentId eq agentUpdate.agent_id }) {
+                it[name] = agentUpdate.name
+                it[lastUpdate] = agentUpdate.last_database_update
             }
         }
     }
@@ -215,7 +225,7 @@ object DbFactory
                         full_description = it[Realty.fullDescription],
                         latitude = it[Realty.latitude],
                         longitude = it[Realty.longitude],
-                        postCode = it[Realty.postCode],
+                        post_code = it[Realty.postCode],
                         price = it[Realty.price],
                         realty_type_id = it[Realty.realtyTypeId],
                         room_number = it[Realty.roomNumber],

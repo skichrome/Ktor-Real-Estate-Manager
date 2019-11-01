@@ -11,7 +11,7 @@ object Realty : Table()
     val roomNumber = integer("room_number")
     val fullDescription = varchar("full_description", 256)
     val address = varchar("address", 128)
-    val postCode = integer("postCode")
+    val postCode = integer("post_code")
     val city = varchar("city", 64)
     val latitude = double("latitude").nullable()
     val longitude = double("longitude").nullable()
@@ -74,7 +74,7 @@ data class RealtyData(
         val room_number: Int,
         val full_description: String,
         val address: String,
-        val postCode: Int,
+        val post_code: Int,
         val city: String,
         val latitude: Double?,
         val longitude: Double?,

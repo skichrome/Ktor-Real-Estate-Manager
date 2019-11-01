@@ -139,20 +139,17 @@ fun Application.main()
                         val response = DbFactory.getAllAgents()
                         call.respond(JsonListResponseOk(result = response))
                     }
-                    get("/agent={id}")
-                    {
-                        val agentId = call.parameters["id"]?.toLongOrNull()
-                        agentId?.let { agentIdNotNull ->
-                            val response = DbFactory.getAgentById(agentIdNotNull)
-
-                            response?.let {
-                                call.respond(JsonResponseOk(result = it))
-                            } ?: call.respond(HttpStatusCode.NotFound, "Error when trying to get this agent.")
-                        } ?: call.respond(HttpStatusCode.BadRequest, "You must enter a valid number for this request")
-                    }
                     post("/") {
                         val agentData = call.receive<Array<AgentData>>().toList()
                         DbFactory.insertAgentList(agentData)
+                        call.respond(mapOf("OK" to true))
+                    }
+                }
+
+                route("/agent") {
+                    post("/update") {
+                        val agentData = call.receive<AgentData>()
+                        DbFactory.updateAgent(agentData)
                         call.respond(mapOf("OK" to true))
                     }
                 }
