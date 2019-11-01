@@ -56,7 +56,7 @@ object Agent : Table()
 {
     val agentId = long("agent_id").primaryKey().autoIncrement()
     val name = varchar("name", 64)
-    val lastUpdate = long("last_database_update").default(System.currentTimeMillis())
+    val lastUpdate = long("last_database_update")
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
