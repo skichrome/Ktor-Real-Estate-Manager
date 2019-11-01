@@ -2,8 +2,6 @@ package com.skichrome.model
 
 import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.Table
-import org.joda.time.DateTime
-import java.util.*
 
 object Realty : Table()
 {
@@ -18,8 +16,8 @@ object Realty : Table()
     val latitude = double("latitude").nullable()
     val longitude = double("longitude").nullable()
     val status = bool("status")
-    val dateAdded = date("date_added")
-    val dateSell = date("date_sell").nullable()
+    val dateAdded = long("date_added")
+    val dateSell = long("date_sell").nullable()
     val agentId = long("agent_id").references(Agent.agentId).index("agent_id_idx")
     val realtyTypeId = integer("realty_type_id").references(RealtyType.id).index("realty_type_idx")
 }
@@ -58,32 +56,32 @@ object Agent : Table()
 {
     val agentId = long("agent_id").primaryKey().autoIncrement()
     val name = varchar("name", 64)
-    val lastUpdate = datetime("last_database_update").default(DateTime(System.currentTimeMillis()))
+    val lastUpdate = long("last_database_update").default(System.currentTimeMillis())
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
 
 data class PoiData(val id: Int, val name: String)
 data class RealtyTypeData(val id: Int, val name: String)
-data class MediaReferenceData(val id: Long, val reference: String, val shortDesc: String, val realtyId: Long)
-data class PoiRealtyData(val realtyId: Long, val poiId: Int)
-data class AgentData(val agentId: Long, val name: String, val lastUpdate: Date)
+data class MediaReferenceData(val id: Long, val reference: String, val short_desc: String, val realty_id: Long)
+data class PoiRealtyData(val realty_id: Long, val poi_id: Int)
+data class AgentData(val agent_id: Long, val name: String, val last_database_update: Long)
 
 data class RealtyData(
         val id: Long,
         val price: Float,
         val surface: Float,
-        val roomNumber: Int,
-        val fullDescription: String,
+        val room_number: Int,
+        val full_description: String,
         val address: String,
         val postCode: Int,
         val city: String,
         val latitude: Double?,
         val longitude: Double?,
         val status: Boolean,
-        val dateAdded: DateTime,
-        val dateSell: DateTime?,
+        val date_added: Long,
+        val date_sell: Long?,
 
-        val agentId: Long,
-        val realtyTypeId: Int
+        val agent_id: Long,
+        val realty_type_id: Int
 )

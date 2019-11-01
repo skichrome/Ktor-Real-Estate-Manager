@@ -127,7 +127,7 @@ fun Application.main()
                         call.respond(JsonListResponseOk(result = response))
                     }
                     post("/") {
-                        val realtyData = call.receive<List<RealtyData>>()
+                        val realtyData = call.receive<Array<RealtyData>>().toList()
                         DbFactory.insertRealtyList(realtyData)
                         call.respond(mapOf("OK" to true))
                     }
@@ -151,7 +151,7 @@ fun Application.main()
                         } ?: call.respond(HttpStatusCode.BadRequest, "You must enter a valid number for this request")
                     }
                     post("/") {
-                        val agentData = call.receive<List<AgentData>>()
+                        val agentData = call.receive<Array<AgentData>>().toList()
                         DbFactory.insertAgentList(agentData)
                         call.respond(mapOf("OK" to true))
                     }
@@ -164,7 +164,7 @@ fun Application.main()
                         call.respond(JsonListResponseOk(result = response))
                     }
                     post("/") {
-                        val poiRealtyData = call.receive<List<PoiRealtyData>>()
+                        val poiRealtyData = call.receive<Array<PoiRealtyData>>().toList()
                         DbFactory.insertPoiRealtyList(poiRealtyData)
                         call.respond(mapOf("OK" to true))
                     }
@@ -177,7 +177,7 @@ fun Application.main()
                         call.respond(JsonListResponseOk(result = response))
                     }
                     post("/") {
-                        val mediaRefData = call.receive<List<MediaReferenceData>>()
+                        val mediaRefData = call.receive<Array<MediaReferenceData>>().toList()
                         DbFactory.insertMediaReferenceList(mediaRefData)
                         call.respond(mapOf("OK" to true))
                     }

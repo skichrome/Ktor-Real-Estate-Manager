@@ -75,18 +75,18 @@ object DbFactory
             Realty.batchInsert(ignore = true, data = newRealty) { realtyToInsert ->
                 this[Realty.id] = realtyToInsert.id
                 this[Realty.status] = realtyToInsert.status
-                this[Realty.agentId] = realtyToInsert.agentId
+                this[Realty.agentId] = realtyToInsert.agent_id
                 this[Realty.address] = realtyToInsert.address
                 this[Realty.city] = realtyToInsert.city
-                this[Realty.dateAdded] = realtyToInsert.dateAdded
-                this[Realty.dateSell] = realtyToInsert.dateSell
-                this[Realty.fullDescription] = realtyToInsert.fullDescription
+                this[Realty.dateAdded] = realtyToInsert.date_added
+                this[Realty.dateSell] = realtyToInsert.date_sell
+                this[Realty.fullDescription] = realtyToInsert.full_description
                 this[Realty.latitude] = realtyToInsert.latitude
                 this[Realty.longitude] = realtyToInsert.longitude
                 this[Realty.postCode] = realtyToInsert.postCode
                 this[Realty.price] = realtyToInsert.price
-                this[Realty.realtyTypeId] = realtyToInsert.realtyTypeId
-                this[Realty.roomNumber] = realtyToInsert.roomNumber
+                this[Realty.realtyTypeId] = realtyToInsert.realty_type_id
+                this[Realty.roomNumber] = realtyToInsert.room_number
                 this[Realty.surface] = realtyToInsert.surface
             }
         }
@@ -96,7 +96,7 @@ object DbFactory
     {
         transaction(db = db) {
             Agent.batchInsert(ignore = true, data = newAgent) { agentToInsert ->
-                this[Agent.agentId] = agentToInsert.agentId
+                this[Agent.agentId] = agentToInsert.agent_id
                 this[Agent.name] = agentToInsert.name
             }
         }
@@ -106,8 +106,8 @@ object DbFactory
     {
         transaction(db = db) {
             PoiRealty.batchInsert(ignore = true, data = poiRealty) { poiRealtyToInsert ->
-                this[PoiRealty.poiId] = poiRealtyToInsert.poiId
-                this[PoiRealty.realtyId] = poiRealtyToInsert.realtyId
+                this[PoiRealty.poiId] = poiRealtyToInsert.poi_id
+                this[PoiRealty.realtyId] = poiRealtyToInsert.realty_id
             }
         }
     }
@@ -117,9 +117,9 @@ object DbFactory
         transaction(db = db) {
             MediaReference.batchInsert(ignore = true, data = mediaReferences) { mediaRefToInsert ->
                 this[MediaReference.id] = mediaRefToInsert.id
-                this[MediaReference.realtyId] = mediaRefToInsert.realtyId
+                this[MediaReference.realtyId] = mediaRefToInsert.realty_id
                 this[MediaReference.reference] = mediaRefToInsert.reference
-                this[MediaReference.shortDesc] = mediaRefToInsert.shortDesc
+                this[MediaReference.shortDesc] = mediaRefToInsert.short_desc
             }
         }
     }
@@ -160,9 +160,9 @@ object DbFactory
         transaction(db = db) {
             Agent.selectAll().forEach {
                 resultList.add(AgentData(
-                        agentId = it[Agent.agentId],
+                        agent_id = it[Agent.agentId],
                         name = it[Agent.name],
-                        lastUpdate = it[Agent.lastUpdate].toDate()
+                        last_database_update = it[Agent.lastUpdate]
                 ))
             }
         }
@@ -175,8 +175,8 @@ object DbFactory
         transaction(db = db) {
             PoiRealty.selectAll().forEach {
                 resultList.add(PoiRealtyData(
-                        poiId = it[PoiRealty.poiId],
-                        realtyId = it[PoiRealty.realtyId]
+                        poi_id = it[PoiRealty.poiId],
+                        realty_id = it[PoiRealty.realtyId]
                 ))
             }
         }
@@ -189,10 +189,10 @@ object DbFactory
         transaction(db = db) {
             MediaReference.selectAll().forEach {
                 resultList.add(MediaReferenceData(
-                        realtyId = it[MediaReference.realtyId],
+                        realty_id = it[MediaReference.realtyId],
                         id = it[MediaReference.id],
                         reference = it[MediaReference.reference],
-                        shortDesc = it[MediaReference.shortDesc]
+                        short_desc = it[MediaReference.shortDesc]
                 ))
             }
         }
@@ -207,18 +207,18 @@ object DbFactory
                 resultList.add(RealtyData(
                         id = it[Realty.id],
                         status = it[Realty.status],
-                        agentId = it[Realty.agentId],
+                        agent_id = it[Realty.agentId],
                         address = it[Realty.address],
                         city = it[Realty.city],
-                        dateAdded = it[Realty.dateAdded],
-                        dateSell = it[Realty.dateSell],
-                        fullDescription = it[Realty.fullDescription],
+                        date_added = it[Realty.dateAdded],
+                        date_sell = it[Realty.dateSell],
+                        full_description = it[Realty.fullDescription],
                         latitude = it[Realty.latitude],
                         longitude = it[Realty.longitude],
                         postCode = it[Realty.postCode],
                         price = it[Realty.price],
-                        realtyTypeId = it[Realty.realtyTypeId],
-                        roomNumber = it[Realty.roomNumber],
+                        realty_type_id = it[Realty.realtyTypeId],
+                        room_number = it[Realty.roomNumber],
                         surface = it[Realty.surface]
                 ))
             }
@@ -234,7 +234,11 @@ object DbFactory
         transaction(db = db) {
             Agent.select { Agent.agentId eq id }
                     .firstOrNull {
-                        result = AgentData(agentId = it[Agent.agentId], name = it[Agent.name], lastUpdate = it[Agent.lastUpdate].toDate())
+                        result = AgentData(
+                                agent_id = it[Agent.agentId],
+                                name = it[Agent.name],
+                                last_database_update = it[Agent.lastUpdate]
+                        )
                         return@firstOrNull true
                     }
         }

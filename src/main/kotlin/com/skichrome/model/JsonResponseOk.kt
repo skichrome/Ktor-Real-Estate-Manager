@@ -4,7 +4,7 @@ import java.text.SimpleDateFormat
 
 data class JsonResponseOk(
         val status: String = "OK",
-        var last_updated: String? = null,
+        var system_date: String? = null,
         val lang: String = "FR",
         val result: Any? = null
 )
@@ -12,6 +12,6 @@ data class JsonResponseOk(
     init
     {
         val sdf = SimpleDateFormat("dd/MM/yyyy hh:mm:ss")
-        last_updated = sdf.format(System.currentTimeMillis())
+        system_date = sdf.format(System.currentTimeMillis())
     }
 }
