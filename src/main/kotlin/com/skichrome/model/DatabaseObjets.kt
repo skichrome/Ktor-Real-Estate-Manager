@@ -9,10 +9,10 @@ object Realty : Table()
     val price = float("price")
     val surface = float("surface")
     val roomNumber = integer("room_number")
-    val fullDescription = varchar("full_description", 256)
-    val address = varchar("address", 128)
+    val fullDescription = varchar("full_description", 2048)
+    val address = varchar("address", 256)
     val postCode = integer("post_code")
-    val city = varchar("city", 64)
+    val city = varchar("city", 128)
     val latitude = double("latitude").nullable()
     val longitude = double("longitude").nullable()
     val status = bool("status")
@@ -25,20 +25,20 @@ object Realty : Table()
 object Poi : Table()
 {
     val id = integer("poi_id").primaryKey()
-    val name = varchar("name", 64)
+    val name = varchar("name", 128)
 }
 
 object RealtyType : Table()
 {
     val id = integer("realty_type_id").primaryKey()
-    val name = varchar("name", 64)
+    val name = varchar("name", 128)
 }
 
 object MediaReference : Table()
 {
     val id = long("media_reference_id").primaryKey()
-    val reference = varchar("reference", 128)
-    val shortDesc = varchar("short_description", 256)
+    val reference = varchar("reference", 512)
+    val shortDesc = varchar("short_description", 1024)
     val realtyId = long("realty_id").references(
             ref = Realty.id,
             onUpdate = ReferenceOption.CASCADE,
@@ -55,7 +55,7 @@ object PoiRealty : Table()
 object Agent : Table()
 {
     val agentId = long("agent_id").primaryKey().autoIncrement()
-    val name = varchar("name", 64)
+    val name = varchar("name", 128)
     val lastUpdate = long("last_database_update")
 }
 
