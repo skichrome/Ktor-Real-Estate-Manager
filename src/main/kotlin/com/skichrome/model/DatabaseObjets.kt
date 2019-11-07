@@ -5,7 +5,7 @@ import org.jetbrains.exposed.sql.Table
 
 object Realty : Table()
 {
-    val id = long("id").primaryKey()
+    val id = long("id").primaryKey(0)
     val price = float("price")
     val surface = float("surface")
     val roomNumber = integer("room_number")
@@ -18,7 +18,7 @@ object Realty : Table()
     val status = bool("status")
     val dateAdded = long("date_added")
     val dateSell = long("date_sell").nullable()
-    val agentId = long("agent_id").references(Agent.agentId).index("agent_id_idx")
+    val agentId = long("agent_id").references(Agent.agentId).index("agent_id_idx").primaryKey(1)
     val realtyTypeId = integer("realty_type_id").references(RealtyType.id).index("realty_type_idx")
 }
 
