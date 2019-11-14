@@ -143,9 +143,11 @@ fun Application.main()
 
                 route("/all-poi-realty")
                 {
-                    get("/") {
-                        val response = DbFactory.getAllPoiRealty()
-                        call.respond(JsonListResponseOk(result = response))
+                    get("/agent-id={agent}") {
+                        call.parameters["agent"]?.toLongOrNull()?.let { agentId ->
+                            val response = DbFactory.getAllPoiRealty(agentId)
+                            call.respond(JsonListResponseOk(result = response))
+                        }
                     }
                     post("/") {
                         val poiRealtyData = call.receive<Array<PoiRealtyData>>().toList()
@@ -154,17 +156,9 @@ fun Application.main()
                     }
                 }
 
-                route("/all-media-references")
+                route("/media-references")
                 {
-                    get("/") {
-                        val response = DbFactory.getAllMediaReference()
-                        call.respond(JsonListResponseOk(result = response))
-                    }
-                    post("/") {
-                        val mediaRefData = call.receive<Array<MediaReferenceData>>().toList()
-                        DbFactory.insertMediaReferenceList(mediaRefData)
-                        call.respond(mapOf("OK" to true))
-                    }
+                    mediaReference()
                 }
 
                 // --------- Read Only from API ---------

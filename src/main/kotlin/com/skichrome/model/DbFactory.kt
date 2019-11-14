@@ -115,7 +115,8 @@ object DbFactory
     fun insertPoiRealtyList(poiRealty: List<PoiRealtyData>)
     {
         transaction(db = db) {
-            PoiRealty.batchInsert(ignore = true, data = poiRealty) { poiRealtyToInsert ->
+            PoiRealty.deleteWhere { PoiRealty.agentId eq poiRealty.first().agent_id }
+            PoiRealty.batchInsert(data = poiRealty) { poiRealtyToInsert ->
                 this[PoiRealty.poiId] = poiRealtyToInsert.poi_id
                 this[PoiRealty.realtyId] = poiRealtyToInsert.realty_id
             }
@@ -131,6 +132,31 @@ object DbFactory
                 this[MediaReference.reference] = mediaRefToInsert.reference
                 this[MediaReference.shortDesc] = mediaRefToInsert.short_desc
             }
+        }
+    }
+
+    fun insertMediaReference(mediaReferenceData: MediaReferenceData)
+    {
+        transaction(db = db) {
+            MediaReference.insert {
+                it[id] = mediaReferenceData.id
+                it[realtyId] = mediaReferenceData.realty_id
+                it[reference] = mediaReferenceData.reference
+                it[shortDesc] = mediaReferenceData.short_desc
+            }
+        }
+    }
+
+    fun deleteUnavailableMediaRef(newMediaReferences: List<Int>)
+    {
+        transaction(db = db) {
+            MediaReference.selectAll()
+                    .filter {
+                        !(newMediaReferences.contains(it[MediaReference.id].toInt()))
+                    }
+                    .forEach {
+                        MediaReference.deleteWhere { MediaReference.id eq it[MediaReference.id] }
+                    }
         }
     }
 
@@ -179,32 +205,36 @@ object DbFactory
         return resultList
     }
 
-    fun getAllPoiRealty(): List<PoiRealtyData>
+    fun getAllPoiRealty(agent: Long): List<PoiRealtyData>
     {
         val resultList: MutableList<PoiRealtyData> = mutableListOf()
         transaction(db = db) {
-            PoiRealty.selectAll().forEach {
-                resultList.add(PoiRealtyData(
-                        poi_id = it[PoiRealty.poiId],
-                        realty_id = it[PoiRealty.realtyId]
-                ))
-            }
+            PoiRealty.select { PoiRealty.agentId eq agent }
+                    .forEach {
+                        resultList.add(PoiRealtyData(
+                                poi_id = it[PoiRealty.poiId],
+                                agent_id = it[PoiRealty.agentId],
+                                realty_id = it[PoiRealty.realtyId]
+                        ))
+                    }
         }
         return resultList
     }
 
-    fun getAllMediaReference(): List<MediaReferenceData>
+    fun getAllMediaReference(agent: Long): List<MediaReferenceData>
     {
         val resultList: MutableList<MediaReferenceData> = mutableListOf()
         transaction(db = db) {
-            MediaReference.selectAll().forEach {
-                resultList.add(MediaReferenceData(
-                        realty_id = it[MediaReference.realtyId],
-                        id = it[MediaReference.id],
-                        reference = it[MediaReference.reference],
-                        short_desc = it[MediaReference.shortDesc]
-                ))
-            }
+            MediaReference.select { MediaReference.agentId eq agent }
+                    .forEach {
+                        resultList.add(MediaReferenceData(
+                                realty_id = it[MediaReference.realtyId],
+                                id = it[MediaReference.id],
+                                agent_id = it[MediaReference.agentId],
+                                reference = it[MediaReference.reference],
+                                short_desc = it[MediaReference.shortDesc]
+                        ))
+                    }
         }
         return resultList
     }
@@ -215,24 +245,24 @@ object DbFactory
         transaction(db = db) {
             Realty.select { Realty.agentId eq agent }
                     .forEach {
-                resultList.add(RealtyData(
-                        id = it[Realty.id],
-                        status = it[Realty.status],
-                        agent_id = it[Realty.agentId],
-                        address = it[Realty.address],
-                        city = it[Realty.city],
-                        date_added = it[Realty.dateAdded],
-                        date_sell = it[Realty.dateSell],
-                        full_description = it[Realty.fullDescription],
-                        latitude = it[Realty.latitude],
-                        longitude = it[Realty.longitude],
-                        post_code = it[Realty.postCode],
-                        price = it[Realty.price],
-                        realty_type_id = it[Realty.realtyTypeId],
-                        room_number = it[Realty.roomNumber],
-                        surface = it[Realty.surface]
-                ))
-            }
+                        resultList.add(RealtyData(
+                                id = it[Realty.id],
+                                status = it[Realty.status],
+                                agent_id = it[Realty.agentId],
+                                address = it[Realty.address],
+                                city = it[Realty.city],
+                                date_added = it[Realty.dateAdded],
+                                date_sell = it[Realty.dateSell],
+                                full_description = it[Realty.fullDescription],
+                                latitude = it[Realty.latitude],
+                                longitude = it[Realty.longitude],
+                                post_code = it[Realty.postCode],
+                                price = it[Realty.price],
+                                realty_type_id = it[Realty.realtyTypeId],
+                                room_number = it[Realty.roomNumber],
+                                surface = it[Realty.surface]
+                        ))
+                    }
         }
         return resultList
     }

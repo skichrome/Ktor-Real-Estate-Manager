@@ -36,7 +36,8 @@ object RealtyType : Table()
 
 object MediaReference : Table()
 {
-    val id = long("media_reference_id").primaryKey()
+    val id = long("media_reference_id").primaryKey(0)
+    val agentId = long("agent_id").primaryKey(1).references(Agent.agentId)
     val reference = varchar("reference", 512)
     val shortDesc = varchar("short_description", 1024)
     val realtyId = long("realty_id").references(
@@ -49,7 +50,8 @@ object MediaReference : Table()
 object PoiRealty : Table()
 {
     val realtyId = long("realty_id").primaryKey(0).references(Realty.id)
-    val poiId = integer("poi_id").primaryKey(1).references(Poi.id)
+    val agentId = long("agent_id").primaryKey(1).references(Agent.agentId)
+    val poiId = integer("poi_id").primaryKey(2).references(Poi.id)
 }
 
 object Agent : Table()
@@ -63,8 +65,8 @@ object Agent : Table()
 
 data class PoiData(val id: Int, val name: String)
 data class RealtyTypeData(val id: Int, val name: String)
-data class MediaReferenceData(val id: Long, val reference: String, val short_desc: String, val realty_id: Long)
-data class PoiRealtyData(val realty_id: Long, val poi_id: Int)
+data class MediaReferenceData(val id: Long, val agent_id: Long, val reference: String, val short_desc: String, val realty_id: Long)
+data class PoiRealtyData(val realty_id: Long, val agent_id: Long, val poi_id: Int)
 data class AgentData(val agent_id: Long, val name: String, val last_database_update: Long)
 
 data class RealtyData(
