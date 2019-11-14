@@ -118,6 +118,7 @@ object DbFactory
             PoiRealty.deleteWhere { PoiRealty.agentId eq poiRealty.first().agent_id }
             PoiRealty.batchInsert(data = poiRealty) { poiRealtyToInsert ->
                 this[PoiRealty.poiId] = poiRealtyToInsert.poi_id
+                this[PoiRealty.agentId] = poiRealtyToInsert.agent_id
                 this[PoiRealty.realtyId] = poiRealtyToInsert.realty_id
             }
         }
