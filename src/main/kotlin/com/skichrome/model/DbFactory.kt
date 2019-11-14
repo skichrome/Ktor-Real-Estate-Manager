@@ -209,11 +209,12 @@ object DbFactory
         return resultList
     }
 
-    fun getAllRealty(): List<RealtyData>
+    fun getAllRealtyFromAgent(agent: Long): List<RealtyData>
     {
         val resultList: MutableList<RealtyData> = mutableListOf()
         transaction(db = db) {
-            Realty.selectAll().forEach {
+            Realty.select { Realty.agentId eq agent }
+                    .forEach {
                 resultList.add(RealtyData(
                         id = it[Realty.id],
                         status = it[Realty.status],

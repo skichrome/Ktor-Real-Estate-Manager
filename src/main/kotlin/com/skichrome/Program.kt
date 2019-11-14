@@ -76,27 +76,11 @@ fun Application.main()
                 }
             }
 
-            // --------- Help page about available routes ---------
-
             route("/real-estate")
             {
-                get("/") {
-                    call.respondHtml {
-                        body {
-                            h1 { +"Available Routes" }
-                            ul {
-                                li { +"/currency-conversion-rate" }
-                                li { +"/all-realty-types : GET" }
-                                li { +"/all-poi : GET" }
-                                li { +"/all-agents/agent={id} : GET" }
-                                li { +"/all-agents : GET / POST ; example of content to send : | {\"agentId\": \"1\", \"name\":\"Boris\",\"lastUpdate\":\"25/10/2019 10:06:00\"} |" }
-                                li { +"/all-poi-realty : GET / POST" }
-                                li { +"/all-media-references : GET / POST" }
-                                li { +"/all-realty : GET / POST" }
-                            }
-                        }
-                    }
-                }
+                // --------- Help page about available routes ---------
+
+                help()
 
                 // --------- Database Initialisation ---------
 
@@ -122,9 +106,12 @@ fun Application.main()
 
                 route("/all-realty")
                 {
-                    get("/") {
-                        val response = DbFactory.getAllRealty()
-                        call.respond(JsonListResponseOk(result = response))
+                    get("/agent-id={agent}") {
+                        val agent = call.parameters["agent"]?.toLongOrNull()
+                        agent?.let {
+                            val response = DbFactory.getAllRealtyFromAgent(agent)
+                            call.respond(JsonListResponseOk(result = response))
+                        }
                     }
                     post("/") {
                         val realtyData = call.receive<Array<RealtyData>>().toList()
