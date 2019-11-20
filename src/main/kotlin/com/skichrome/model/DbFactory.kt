@@ -89,6 +89,26 @@ object DbFactory
                 this[Realty.roomNumber] = realtyToInsert.room_number
                 this[Realty.surface] = realtyToInsert.surface
             }
+
+            newRealty.forEach { realtyUpdated ->
+                Realty.update({ Realty.id eq realtyUpdated.id }) {
+                    it[id] = realtyUpdated.id
+                    it[status] = realtyUpdated.status
+                    it[agentId] = realtyUpdated.agent_id
+                    it[address] = realtyUpdated.address
+                    it[city] = realtyUpdated.city
+                    it[dateAdded] = realtyUpdated.date_added
+                    it[dateSell] = realtyUpdated.date_sell
+                    it[fullDescription] = realtyUpdated.full_description
+                    it[latitude] = realtyUpdated.latitude
+                    it[longitude] = realtyUpdated.longitude
+                    it[postCode] = realtyUpdated.post_code
+                    it[price] = realtyUpdated.price
+                    it[realtyTypeId] = realtyUpdated.realty_type_id
+                    it[roomNumber] = realtyUpdated.room_number
+                    it[surface] = realtyUpdated.surface
+                }
+            }
         }
     }
 
@@ -98,16 +118,15 @@ object DbFactory
             Agent.batchInsert(ignore = true, data = newAgent) { agentToInsert ->
                 this[Agent.agentId] = agentToInsert.agent_id
                 this[Agent.name] = agentToInsert.name
+                this[Agent.lastUpdate] = agentToInsert.last_database_update
             }
-        }
-    }
 
-    fun updateAgent(agentUpdate: AgentData)
-    {
-        transaction(db = db) {
-            Agent.update({ Agent.agentId eq agentUpdate.agent_id }) {
-                it[name] = agentUpdate.name
-                it[lastUpdate] = agentUpdate.last_database_update
+            newAgent.forEach { agentToUpdate ->
+                Agent.update({ Agent.agentId eq agentToUpdate.agent_id }) {
+                    it[agentId] = agentToUpdate.agent_id
+                    it[name] = agentToUpdate.name
+                    it[lastUpdate] = agentToUpdate.last_database_update
+                }
             }
         }
     }
@@ -206,7 +225,7 @@ object DbFactory
         return resultList
     }
 
-    fun getAllPoiRealty(agent: Long): List<PoiRealtyData>
+    fun getAllPoiRealtyFromAgent(agent: Long): List<PoiRealtyData>
     {
         val resultList: MutableList<PoiRealtyData> = mutableListOf()
         transaction(db = db) {
@@ -222,7 +241,7 @@ object DbFactory
         return resultList
     }
 
-    fun getAllMediaReference(agent: Long): List<MediaReferenceData>
+    fun getAllMediaReferenceFromAgent(agent: Long): List<MediaReferenceData>
     {
         val resultList: MutableList<MediaReferenceData> = mutableListOf()
         transaction(db = db) {

@@ -16,23 +16,18 @@ fun Route.help()
             body {
                 h1 { +"Available Routes" }
                 ul {
+                    li { +"/init : database initialisation, to be triggered at first load of this application" }
                     li { +"/currency-conversion-rate" }
                     li {
-                        +"/all-realty-types"
+                        +"/all-realty"
                         ul {
-                            li { +"GET" }
-                        }
-                    }
-                    li {
-                        +"/all-poi"
-                        ul {
-                            li { +"GET" }
-                        }
-                    }
-                    li {
-                        +"/all-agents/agent={id}"
-                        ul {
-                            li { +"GET" }
+                            li {
+                                +"/agent-id={id}"
+                                ul {
+                                    li { +"GET" }
+                                }
+                            }
+                            li { +"POST" }
                         }
                     }
                     li {
@@ -45,7 +40,12 @@ fun Route.help()
                     li {
                         +"/all-poi-realty"
                         ul {
-                            li { +"GET" }
+                            li {
+                                +"/agent-id={id}"
+                                ul {
+                                    li { +"GET" }
+                                }
+                            }
                             li { +"POST" }
                         }
                     }
@@ -57,10 +57,15 @@ fun Route.help()
                         }
                     }
                     li {
-                        +"/all-realty"
+                        +"/all-realty-types"
                         ul {
                             li { +"GET" }
-                            li { +"POST" }
+                        }
+                    }
+                    li {
+                        +"/all-poi"
+                        ul {
+                            li { +"GET" }
                         }
                     }
                 }

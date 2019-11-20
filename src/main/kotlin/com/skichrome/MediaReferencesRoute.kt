@@ -20,7 +20,7 @@ fun Route.mediaReference()
 {
     get("/agent-id={agent}") {
         call.parameters["agent"]?.toLongOrNull()?.let {
-            val response = DbFactory.getAllMediaReference(it)
+            val response = DbFactory.getAllMediaReferenceFromAgent(it)
             call.respond(JsonListResponseOk(result = response))
         }
     }

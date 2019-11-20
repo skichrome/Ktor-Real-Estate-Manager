@@ -133,19 +133,11 @@ fun Application.main()
                     }
                 }
 
-                route("/agent") {
-                    post("/update") {
-                        val agentData = call.receive<AgentData>()
-                        DbFactory.updateAgent(agentData)
-                        call.respond(mapOf("OK" to true))
-                    }
-                }
-
                 route("/all-poi-realty")
                 {
                     get("/agent-id={agent}") {
                         call.parameters["agent"]?.toLongOrNull()?.let { agentId ->
-                            val response = DbFactory.getAllPoiRealty(agentId)
+                            val response = DbFactory.getAllPoiRealtyFromAgent(agentId)
                             call.respond(JsonListResponseOk(result = response))
                         }
                     }
