@@ -30,6 +30,12 @@ fun Route.mediaReference()
         DbFactory.insertMediaReferenceList(mediaRefData)
         call.respond(mapOf("OK" to true))
     }
+    get("/{mediaRefId}") {
+        val ref = call.parameters["mediaRefId"]
+        ref?.let {
+            call.respond(mapOf("OK" to true, "url" to it))
+        } ?: call.respond(status = HttpStatusCode.BadRequest, message = "OK" to false)
+    }
 
     route("/upload") {
         upload()
@@ -69,15 +75,8 @@ fun Route.upload()
                 }
             }
         }
-        val mediaRefUrl = "http://192.168.0.24:8080/media-references/$outputFileName"
+        val mediaRefUrl = "http://192.168.0.24:8080/real-estate/media-references/$outputFileName"
         val insertedMediaRefId = DbFactory.insertMediaReference(MediaReferenceData(reference = mediaRefUrl, agent_id = 1L, short_desc = "", realty_id = 1))
         call.respond(mapOf("OK" to true, "id" to insertedMediaRefId))
-    }
-
-    get("/{mediaRefId}") {
-        val ref = call.parameters["mediaRefId"]
-        ref?.let {
-            call.respond(mapOf("OK" to true, "url" to it))
-        } ?: call.respond(status = HttpStatusCode.NotFound, message = "OK" to false)
     }
 }
