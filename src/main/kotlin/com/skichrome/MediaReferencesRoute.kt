@@ -98,7 +98,7 @@ fun Route.upload()
 
         if (agentId != -1L || description != "" || realtyId != -1L || imgId != -1L || imgFile != null)
         {
-            val mediaRefUrl = "http://${call.request.headers["Host"]}/real-estate/media-references/$outputFileName"
+            val mediaRefUrl = "https://${call.request.headers["Host"]}/real-estate/media-references/$outputFileName"
             val insertedMediaRefId = DbFactory.insertMediaReference(MediaReferenceData(
                     reference = mediaRefUrl,
                     agent_id = agentId,
