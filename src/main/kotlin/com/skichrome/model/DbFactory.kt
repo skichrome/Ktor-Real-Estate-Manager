@@ -5,6 +5,7 @@ import com.skichrome.utils.DB_PROD_URL
 import com.skichrome.utils.DB_USERNAME
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.io.File
 
 object DbFactory
 {
@@ -143,19 +144,7 @@ object DbFactory
         }
     }
 
-    fun insertMediaReferenceList(mediaReferences: List<MediaReferenceData>)
-    {
-        transaction(db = db) {
-            MediaReference.batchInsert(ignore = true, data = mediaReferences) { mediaRefToInsert ->
-                this[MediaReference.id] = mediaRefToInsert.id
-                this[MediaReference.realtyId] = mediaRefToInsert.realty_id
-                this[MediaReference.reference] = mediaRefToInsert.reference
-                this[MediaReference.shortDesc] = mediaRefToInsert.short_desc
-            }
-        }
-    }
-
-    fun insertMediaReference(mediaReferenceData: MediaReferenceData): Long
+    fun insertMediaReference(mediaReferenceData: MediaReferenceData, serverRefStr: String): Long
     {
         return transaction(db = db) {
             val insertedMediaRef = MediaReference.insertIgnore {
@@ -163,6 +152,7 @@ object DbFactory
                 it[agentId] = mediaReferenceData.agent_id
                 it[realtyId] = mediaReferenceData.realty_id
                 it[reference] = mediaReferenceData.reference
+                it[serverReference] = serverRefStr
                 it[shortDesc] = mediaReferenceData.short_desc
             }
 
@@ -178,17 +168,41 @@ object DbFactory
         }
     }
 
-    fun deleteUnavailableMediaRef(newMediaReferences: List<Int>)
+    fun deleteUnavailableMediaRef(clientMediaRef: List<MediaReferenceData>): List<MediaReferenceData>
     {
-        transaction(db = db) {
-            MediaReference.selectAll()
-                    .filter {
-                        !(newMediaReferences.contains(it[MediaReference.id].toInt()))
-                    }
-                    .forEach {
-                        MediaReference.deleteWhere { MediaReference.id eq it[MediaReference.id] }
-                    }
+        if (clientMediaRef.isEmpty())
+            return emptyList()
+
+        val missingMediaRef = mutableListOf<MediaReferenceData>()
+
+        val mediaRefIdList: MutableList<Long> = mutableListOf()
+        clientMediaRef.forEach {
+            mediaRefIdList.add(it.id)
         }
+
+        transaction(db = db) {
+            val clientMediaRefFromServer = MediaReference.select { MediaReference.agentId eq clientMediaRef.first().agent_id }
+
+            clientMediaRefFromServer.filter {
+                !(mediaRefIdList.contains(it[MediaReference.id]))
+            }.forEach {
+                MediaReference.deleteWhere { MediaReference.id eq it[MediaReference.id] }
+                val file = File(it[MediaReference.serverReference])
+                file.absoluteFile.delete()
+            }
+
+            val clientMediaRefFromServerId = mutableListOf<Long>()
+            clientMediaRefFromServer.forEach {
+                clientMediaRefFromServerId.add(it[MediaReference.id])
+            }
+
+            clientMediaRef.filter {
+                !(clientMediaRefFromServerId.contains(it.id))
+            }.forEach {
+                missingMediaRef.add(it)
+            }
+        }
+        return missingMediaRef
     }
 
     // --------- Select All ---------

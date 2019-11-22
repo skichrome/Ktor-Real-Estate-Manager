@@ -52,8 +52,12 @@ fun Route.help()
                     li {
                         +"/media-references"
                         ul {
-                            li { +"GET" }
-                            li { +"POST" }
+                            li {
+                                +"/upload : POST : upload a media to the server in MultiPart format, with its associated needed informations."
+                            }
+                            li { +"/agent-id={agent} : GET : get all medias from one agent" }
+                            li { +"/{mediaRefId} : GET : get an url of specified media id." }
+                            li { +"/delete-delta : POST : Compare the list in parameter and delete media that have been deleted on client, and return a list of id that aren't available on server (list of media to upload)" }
                         }
                     }
                     li {
