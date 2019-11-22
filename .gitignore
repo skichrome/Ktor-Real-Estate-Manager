@@ -15,3 +15,4 @@
 
 /bce-xml.xml
 src/main/kotlin/com/skichrome/utils/DatabaseCredentials.kt
+media_references/*

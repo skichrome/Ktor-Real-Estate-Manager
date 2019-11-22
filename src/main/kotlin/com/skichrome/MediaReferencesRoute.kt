@@ -47,6 +47,10 @@ fun Route.upload()
     post("/") {
         val multipart = call.receiveMultipart()
         var title = ""
+        var agentId = -1L
+        var realtyId = -1L
+        var imgId = -1L
+        val workDirFile = File(System.getProperty("user.dir") + "/media_references")
         var outputFileName = "upload-${System.currentTimeMillis()}"
         var imgFile: File? = null
         multipart.forEachPart { part ->
@@ -56,13 +60,25 @@ fun Route.upload()
                 {
                     if (part.name == "title")
                         title = part.value
+                    if (part.name == "agent_id")
+                        agentId = part.value.toLongOrNull() ?: -1L
+                    if (part.name == "realty_id")
+                        realtyId = part.value.toLongOrNull() ?: -1L
+                    if (part.name == "id")
+                        imgId = part.value.toLongOrNull() ?: -1L
                 }
                 is PartData.FileItem ->
                 {
                     part.originalFileName?.let {
                         val imgExt = File(it).extension
                         outputFileName += ".$imgExt"
-                        val file = File("/", outputFileName)
+
+                        workDirFile.mkdirs()
+
+                        val file = File(workDirFile, outputFileName)
+
+                        println("File folder : $workDirFile")
+                        println("Server file location : $outputFileName")
 
                         part.streamProvider().use { its ->
                             file.outputStream().buffered().use { bos ->
@@ -75,8 +91,15 @@ fun Route.upload()
                 }
             }
         }
-        val mediaRefUrl = "http://192.168.0.24:8080/real-estate/media-references/$outputFileName"
-        val insertedMediaRefId = DbFactory.insertMediaReference(MediaReferenceData(reference = mediaRefUrl, agent_id = 1L, short_desc = "", realty_id = 1))
+
+        val mediaRefUrl = "http://${call.request.headers["Host"]}/real-estate/media-references/$outputFileName"
+        val insertedMediaRefId = DbFactory.insertMediaReference(MediaReferenceData(
+                reference = mediaRefUrl,
+                agent_id = agentId,
+                short_desc = title,
+                realty_id = realtyId,
+                id = imgId)
+        )
         call.respond(mapOf("OK" to true, "id" to insertedMediaRefId))
     }
 }

@@ -158,12 +158,22 @@ object DbFactory
     fun insertMediaReference(mediaReferenceData: MediaReferenceData): Long
     {
         return transaction(db = db) {
-            val insertedMediaRef = MediaReference.insert {
+            val insertedMediaRef = MediaReference.insertIgnore {
                 it[id] = mediaReferenceData.id
+                it[agentId] = mediaReferenceData.agent_id
                 it[realtyId] = mediaReferenceData.realty_id
                 it[reference] = mediaReferenceData.reference
                 it[shortDesc] = mediaReferenceData.short_desc
             }
+
+            MediaReference.update({ MediaReference.id eq mediaReferenceData.id and (MediaReference.agentId eq mediaReferenceData.agent_id) }) {
+                it[id] = mediaReferenceData.id
+                it[agentId] = mediaReferenceData.agent_id
+                it[realtyId] = mediaReferenceData.realty_id
+                it[reference] = mediaReferenceData.reference
+                it[shortDesc] = mediaReferenceData.short_desc
+            }
+
             insertedMediaRef[MediaReference.id]
         }
     }
