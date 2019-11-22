@@ -91,7 +91,7 @@ object DbFactory
             }
 
             newRealty.forEach { realtyUpdated ->
-                Realty.update({ Realty.id eq realtyUpdated.id }) {
+                Realty.update({ Realty.id eq realtyUpdated.id and (Realty.agentId eq realtyUpdated.agent_id) }) {
                     it[id] = realtyUpdated.id
                     it[status] = realtyUpdated.status
                     it[agentId] = realtyUpdated.agent_id
@@ -155,15 +155,16 @@ object DbFactory
         }
     }
 
-    fun insertMediaReference(mediaReferenceData: MediaReferenceData)
+    fun insertMediaReference(mediaReferenceData: MediaReferenceData): Long
     {
-        transaction(db = db) {
-            MediaReference.insert {
+        return transaction(db = db) {
+            val insertedMediaRef = MediaReference.insert {
                 it[id] = mediaReferenceData.id
                 it[realtyId] = mediaReferenceData.realty_id
                 it[reference] = mediaReferenceData.reference
                 it[shortDesc] = mediaReferenceData.short_desc
             }
+            insertedMediaRef[MediaReference.id]
         }
     }
 

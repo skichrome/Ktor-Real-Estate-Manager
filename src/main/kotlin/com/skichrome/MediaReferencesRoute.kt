@@ -4,6 +4,7 @@ import com.skichrome.model.DbFactory
 import com.skichrome.model.JsonListResponseOk
 import com.skichrome.model.MediaReferenceData
 import io.ktor.application.call
+import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.PartData
 import io.ktor.http.content.forEachPart
 import io.ktor.http.content.streamProvider
@@ -29,11 +30,6 @@ fun Route.mediaReference()
         DbFactory.insertMediaReferenceList(mediaRefData)
         call.respond(mapOf("OK" to true))
     }
-    post("/delete-exist") {
-        val androidAppMediaRef = call.receive<Array<Int>>().toList()
-        DbFactory.deleteUnavailableMediaRef(androidAppMediaRef)
-        call.respond(mapOf("OK" to true))
-    }
 
     route("/upload") {
         upload()
@@ -45,6 +41,7 @@ fun Route.upload()
     post("/") {
         val multipart = call.receiveMultipart()
         var title = ""
+        var outputFileName = "upload-${System.currentTimeMillis()}"
         var imgFile: File? = null
         multipart.forEachPart { part ->
             when (part)
@@ -58,7 +55,8 @@ fun Route.upload()
                 {
                     part.originalFileName?.let {
                         val imgExt = File(it).extension
-                        val file = File("/", "upload-${System.currentTimeMillis()}.$imgExt")
+                        outputFileName += ".$imgExt"
+                        val file = File("/", outputFileName)
 
                         part.streamProvider().use { its ->
                             file.outputStream().buffered().use { bos ->
@@ -71,6 +69,15 @@ fun Route.upload()
                 }
             }
         }
-//        DbFactory.insertMediaReference()
+        val mediaRefUrl = "http://192.168.0.24:8080/media-references/$outputFileName"
+        val insertedMediaRefId = DbFactory.insertMediaReference(MediaReferenceData(reference = mediaRefUrl, agent_id = 1L, short_desc = "", realty_id = 1))
+        call.respond("OK" to insertedMediaRefId)
+    }
+
+    get("/{mediaRefId}") {
+        val ref = call.parameters["mediaRefId"]
+        ref?.let {
+            call.respond("OK" to it)
+        } ?: call.respond(status = HttpStatusCode.NotFound, message = "OK" to false)
     }
 }

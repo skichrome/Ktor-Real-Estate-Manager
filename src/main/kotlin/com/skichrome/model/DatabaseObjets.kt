@@ -36,7 +36,7 @@ object RealtyType : Table()
 
 object MediaReference : Table()
 {
-    val id = long("media_reference_id").primaryKey(0)
+    val id = long("media_reference_id").primaryKey(0).autoIncrement()
     val agentId = long("agent_id").primaryKey(1).references(Agent.agentId)
     val reference = varchar("reference", 512)
     val shortDesc = varchar("short_description", 1024)
@@ -65,7 +65,7 @@ object Agent : Table()
 
 data class PoiData(val id: Int, val name: String)
 data class RealtyTypeData(val id: Int, val name: String)
-data class MediaReferenceData(val id: Long, val agent_id: Long, val reference: String, val short_desc: String, val realty_id: Long)
+data class MediaReferenceData(val id: Long = 0, val agent_id: Long, val reference: String, val short_desc: String, val realty_id: Long)
 data class PoiRealtyData(val realty_id: Long, val agent_id: Long, val poi_id: Int)
 data class AgentData(val agent_id: Long, val name: String, val last_database_update: Long)
 
