@@ -37,9 +37,9 @@ object MediaReference : Table()
 {
     val id = long("media_reference_id").primaryKey(0)
     val agentId = long("agent_id").primaryKey(1).references(Agent.agentId)
-    val reference = varchar("reference", 1024).index(isUnique = true)
-    val serverReference = varchar("server_reference", 1024).index(isUnique = true)
-    val shortDesc = varchar("short_description", 1024)
+    val reference = varchar("reference", 512).index(isUnique = true)
+    val serverReference = varchar("server_reference", 512).index(isUnique = true)
+    val shortDesc = varchar("short_description", 128)
     val realtyId = long("realty_id").references(ref = Realty.id).index("media_ref_realty_id_idx")
 }
 
