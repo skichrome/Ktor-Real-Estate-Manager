@@ -12,6 +12,7 @@ import io.ktor.http.content.streamProvider
 import io.ktor.request.receive
 import io.ktor.request.receiveMultipart
 import io.ktor.response.respond
+import io.ktor.response.respondFile
 import io.ktor.routing.Route
 import io.ktor.routing.get
 import io.ktor.routing.post
@@ -30,12 +31,17 @@ fun Route.mediaReference()
             call.respond(JsonListResponseOk(result = response))
         }
     }
+    // Test command with curl :
+    // curl -v -F id=1 -F title=test -F agent_id=1 -F realty_id=1 -F upload=@detective_main_app_logo.png http://localhost:8080/real-estate/media-references/upload
     get("/{mediaRefId}") {
-        // todo return url of picture to display on client
         val ref = call.parameters["mediaRefId"]
         ref?.let {
-            call.respond(mapOf("OK" to true, "url" to it))
-        } ?: call.respond(status = HttpStatusCode.BadRequest, message = "OK" to false)
+            val requestedFile = File(System.getProperty("user.dir") + "/media_references", it)
+            if (requestedFile.exists())
+                call.respondFile(requestedFile)
+            else
+                call.respond(HttpStatusCode.NotFound)
+        }
     }
     post("/delete-delta") {
         val mediaRefData = call.receive<Array<MediaReferenceData>>().toList()
