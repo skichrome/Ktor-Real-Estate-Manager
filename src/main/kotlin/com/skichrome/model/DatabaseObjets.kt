@@ -6,6 +6,7 @@ object Realty : Table()
 {
     val id = long("id").primaryKey(0)
     val price = float("price")
+    val currency = integer("price_currency")
     val surface = float("surface")
     val roomNumber = integer("room_number")
     val fullDescription = varchar("full_description", 2048)
@@ -68,6 +69,7 @@ data class AgentData(val agent_id: Long, val name: String, val last_database_upd
 data class RealtyData(
         val id: Long,
         val price: Float,
+        val price_currency: Int,
         val surface: Float,
         val room_number: Int,
         val full_description: String,

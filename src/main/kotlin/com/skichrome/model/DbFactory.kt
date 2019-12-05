@@ -89,6 +89,7 @@ object DbFactory
                 this[Realty.realtyTypeId] = realtyToInsert.realty_type_id
                 this[Realty.roomNumber] = realtyToInsert.room_number
                 this[Realty.surface] = realtyToInsert.surface
+                this[Realty.currency] = realtyToInsert.price_currency
             }
 
             newRealty.forEach { realtyUpdated ->
@@ -108,6 +109,7 @@ object DbFactory
                     it[realtyTypeId] = realtyUpdated.realty_type_id
                     it[roomNumber] = realtyUpdated.room_number
                     it[surface] = realtyUpdated.surface
+                    it[currency] = realtyUpdated.price_currency
                 }
             }
         }
@@ -305,7 +307,8 @@ object DbFactory
                                 price = it[Realty.price],
                                 realty_type_id = it[Realty.realtyTypeId],
                                 room_number = it[Realty.roomNumber],
-                                surface = it[Realty.surface]
+                                surface = it[Realty.surface],
+                                price_currency = it[Realty.currency]
                         ))
                     }
         }
