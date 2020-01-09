@@ -1,4 +1,4 @@
-# :sunglasses: Real Estate Manager Ktor Backend [![Build Status](https://dev.campeoltoni.fr/jenkins/buildStatus/icon?job=ktor-real-estate-manager)](https://dev.campeoltoni.fr/jenkins/job/ktor-real-estate-manager/)
+# :sunglasses: Real Estate Manager Ktor Backend [![Build Status](https://jenkins.campeoltoni.fr/buildStatus/icon?job=ktor-real-estate-manager)](https://jenkins.campeoltoni.fr/job/ktor-real-estate-manager/)
 
 This application is developed to be used with the Android app 
 [Real Estate Manager](https://github.com/skichrome/RealEstateManager)
