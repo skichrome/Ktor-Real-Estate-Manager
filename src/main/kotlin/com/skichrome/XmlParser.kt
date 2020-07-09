@@ -1,6 +1,5 @@
 package com.skichrome
 
-import jdk.internal.org.xml.sax.SAXException
 import kotlinx.io.errors.IOException
 import org.w3c.dom.NodeList
 import java.io.File
@@ -70,10 +69,10 @@ object XmlParser
         } catch (e: ParserConfigurationException)
         {
             e.printStackTrace()
-        } catch (e: SAXException)
+        } catch (e: IOException)
         {
             e.printStackTrace()
-        } catch (e: IOException)
+        } catch (e: Exception)
         {
             e.printStackTrace()
         }
